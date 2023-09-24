@@ -33,3 +33,17 @@ Primero se busca el bucket asociado a través de la clave (key) en el bucket pri
 #### Eliminación
 
 La eliminación de registros implica ubicar el registro deseado en el bucket correspondiente y reemplazarlo por el último registro del mismo, actualizando el tamaño del bucket.
+
+### Avl File
+El AVL-File es una estructura de datos basada en árboles AVL que se utiliza para almacenar y gestionar registros. Esta estructura combina las propiedades de los árboles AVL (árboles binarios de búsqueda balanceados) con archivos binarios para lograr una organización eficiente de los registros y operaciones de búsqueda, inserción y eliminación.
+## Inserción
+
+La inserción de registros en el AVL-File se realiza de manera similar a la inserción en un árbol AVL convencional. Cada registro se inserta en el árbol según un criterio de orden, que generalmente está basado en una clave única, como un valor hash o un identificador único. Durante la inserción, el árbol se reorganiza automáticamente para mantener su propiedad de equilibrio (balance). Si la inserción desequilibra el árbol, se realizan rotaciones para restaurar el equilibrio.
+
+## Búsqueda
+
+La búsqueda de registros en el AVL-File se basa en el mismo principio que la búsqueda en un árbol AVL estándar. Se busca el registro deseado siguiendo el criterio de orden de la clave y realizando comparaciones. La ventaja del AVL-File radica en su capacidad para realizar búsquedas eficientes gracias a la estructura balanceada del árbol.
+
+## Eliminacion
+
+La eliminación de registros en el AVL-File se realiza también siguiendo el principio de un árbol AVL. Se busca el registro a eliminar, se realiza la eliminación y se restaura el equilibrio del árbol mediante rotaciones si es necesario.

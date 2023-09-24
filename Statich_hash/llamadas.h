@@ -21,23 +21,25 @@ void Interactive_Menu_ExtendibleHash()
 
     do
     {
-        cout << "\n\n        Menu " << endl;
+        cout << "\n\n        Menú " << endl;
         cout << "--------------------" << endl;
-        cout << "1. Load .csv" << endl;
-        cout << "2. Add record" << endl;
-        cout << "3. Remove record" << endl;
-        cout << "4. Search record" << endl;
-        cout << "5. Show all records" << endl;
-        cout << "0. End" << endl;
+        cout << "1. Cargar .csv" << endl;
+        cout << "2. Agregar registro" << endl;
+        cout << "3. Eliminar registro" << endl;
+        cout << "4. Buscar registro" << endl;
+        cout << "5. Mostrar todos los registros" << endl;
+        cout << "0. Salir" << endl;
 
-        cout << "\nEnter an option: ";
+        cout << "\nIngrese una opción: ";
+
         cin >> opcion;
 
         while (opcion != 0 and opcion != 1 and opcion != 2 and opcion != 3 and opcion != 4 and opcion != 5)
         {
-            cerr << "\nEnter a valid option";
-            cout << "\nEnter an option: ";
+            cerr << "\nIngrese una opción válida";
+            cout << "\nIngrese una opción: ";
             cin >> opcion;
+
         }
         switch (opcion)
         {
@@ -45,8 +47,7 @@ void Interactive_Menu_ExtendibleHash()
             {
                 //ext_hash.memory_accesses = 0;
                 int n;
-                cout << "How many records you want to load? (0 if all)\n";
-                cout<<" 0 == ALL"<<endl;
+                cout << "¿Cuántos registros desea cargar? (0 si desea cargar todos)\n";
                 cin>>n;
                 if (n != 0)
                 {
@@ -55,8 +56,8 @@ void Interactive_Menu_ExtendibleHash()
                     auto end = std::chrono::high_resolution_clock::now();
                     std::chrono::duration<double> duration = end - start;
                     //cout << "\nSecondary memory accesses are: " << ext_hash.memory_accesses << "\n";
-                    cout << "ADD: Elapsed time: " << duration.count() << " segundos"
-                         << "\n";
+                    cout << "AGREGAR: Tiempo transcurrido: " << duration.count() << " segundos"<<endl;
+
                 }
                 else
                 {
@@ -65,8 +66,8 @@ void Interactive_Menu_ExtendibleHash()
                     auto end = std::chrono::high_resolution_clock::now();
                     std::chrono::duration<double> duration = end - start;
                     // cout << "\nSecondary memory accesses are: " << ext_hash.memory_accesses << "\n";
-                    cout << "ADD: Elapsed time:  " << duration.count() << " seconds"
-                         << "\n";
+                    cout << "AGREGAR: Tiempo transcurrido: " << duration.count() << " segundos"<<endl;
+
                 }
             }
                 break;
@@ -80,15 +81,17 @@ void Interactive_Menu_ExtendibleHash()
                 auto end = std::chrono::high_resolution_clock::now();
                 std::chrono::duration<double> duration = end - start;
                 //cout << "\nSecondary memory accesses are: " << ext_hash.memory_accesses << "\n";
-                cout << "ADD: Elapsed time:  " << duration.count() << " seconds"
-                     << "\n";
+                cout << "AGREGAR: Tiempo transcurrido: " << duration.count() << " segundos"
+                     << endl;
+
             }
                 break;
             case 3:
             {
                 //ext_hash.memory_accesses = 0;
                 string key;
-                cout << "Insert key to remove:";
+                cout << "Ingrese la clave a eliminar: ";
+
                 cin.ignore();
                 getline(cin, key);
                 auto start = std::chrono::high_resolution_clock::now();
@@ -98,37 +101,40 @@ void Interactive_Menu_ExtendibleHash()
                 auto end = std::chrono::high_resolution_clock::now();
                 std::chrono::duration<double> duration = end - start;
                 //cout << "\nSecondary memory accesses are: " << ext_hash.memory_accesses << "\n";
-                cout << "DELETE: Elapsed time:  " << duration.count() << " seconds"
-                     << "\n";
+                cout << "ELIMINAR: Tiempo transcurrido: " << duration.count() << " segundos"<<endl;
+
             }
                 break;
             case 4:
             {
                 //ext_hash.memory_accesses = 0;
                 string key;
-                cout << "Insert key to search:\n";
+                cout << "Insertar clave para buscar:"<<endl;
                 cin.ignore();
                 getline(cin, key);
-                Record searched;
+                //  Record searched;
 
                 auto start = std::chrono::high_resolution_clock::now();
-                if (prueba.search_record(key) == true)
+                if (prueba.search_record(key))
                 {
                     cout<<"Encontrado con exito "<<endl;
-                    searched.showData();
-                    auto end = std::chrono::high_resolution_clock::now();
+                    //searched.showData();
 
-                    std::chrono::duration<double> duration = end - start;
-
-                    //cout << "\nSecondary memory accesses are: " << ext_hash.memory_accesses << "\n";
-                    cout << "SEARCH: Elapsed time:  " << duration.count() << " seconds"
-                         << "\n";
                 }
-                //  ingrese_0_para_salir(opcion);
+                else{
+                    cout<<"Car no encontrado "<<endl;
+                }
+                auto end = std::chrono::high_resolution_clock::now();
+                std::chrono::duration<double> duration = end - start;
+
+                //cout << "\nSecondary memory accesses are: " << ext_hash.memory_accesses << "\n";
+                cout << "BÚSQUEDA: Tiempo transcurrido:  " << duration.count() << " segundos"<<endl;
+
             }
                 break;
             case 5:
             {
+                cout<<"Imprimir todos los record "<<endl;
                 prueba.read_Buckets();
             }
                 break;
@@ -139,7 +145,11 @@ void Interactive_Menu_ExtendibleHash()
                 break;
             default:
             {
-                cout << "\nInvalid option.";
+                cout<<endl;
+                cout << "Opción inválida.";
+                cout<<endl;
+
+
             }
                 break;
         }

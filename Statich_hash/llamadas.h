@@ -174,7 +174,6 @@ void read_dataset_count(string filename, int i, static_hash &ext) {
     getline(fio, line); // Lee la primera línea para ignorar los encabezados
 
     while (getline(fio, line)) {
-        cout<<"count: "<<cont<<endl;
         string str;
         stringstream ss(line);
         vector<string> vec;
@@ -194,10 +193,8 @@ void read_dataset_count(string filename, int i, static_hash &ext) {
 
             if (cont < i) {
                 ext.insert_record(record);
-                cout<<"El record numero: "<<cont<<endl;
                 //record.showData();
-                cout<<endl;
-                cout<<endl;
+
                 cont++;
             }
             else {

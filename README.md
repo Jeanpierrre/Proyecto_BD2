@@ -1,2 +1,35 @@
-# Proyecto_BD2
-Proyecto de BD2
+
+# Proyecto1
+
+## Introduccion
+
+### Objetivos del proyecto
+El proyecto consiste en crear tres estructuras de datos (Sequential-File, AVL-File y Extendible Hashing) junto con sus operaciones de inserción, búsqueda y eliminación. Luego, evaluar la eficiencia de cada operación utilizando gráficos que representen el tiempo de ejecución en función de la cantidad de registros.
+
+### Descripcion del dataset
+Se emplearon conjuntos de datos de Kaggle (https://www.kaggle.com/datasets) descargados en formato CSV. Los datos se movieron a nuevos archivos con el fin de asegurar el correcto funcionamiento de los algoritmos encargados de administrar archivos físicos.
+
+### Resultados esperados
+Funcionamiento adecuado de las estructuras de manejo de archivos y sus métodos asociados.  ???	
+
+## Tecnicas utilizadas
+
+![Alt Text](/h1.png)
+### Extendible hashing
+El extendible hash es una estructura de almacenamiento dinámico. Consta de 3 elementos importantes, registros, buckets y el hash table. Los registros son un conjunto de información relacionada los cuales se encuentran en un inicio en el archivo dataset y posteriormente en buckets, estructuras de almacenamiento de registros. Así mismo, el hash_table es un conjunto de asociaciones key-value en donde el key es la llave a través del cual se puede llegar al value, siendo este el valor en memoria que referencia a dicho bucket, valor en específico.  La estructura extendible hash emula el funcionamiento de una base de datos, la organización, accesibilidad y perdurabilidad de los datos. Los archivos index.bin y data.bin me permiten manejar la perdurabilidad de los registros. Dentro de index.bin se almacenan las asociaciones key-value del hash_table mientras que en data.bin buckets de registros.
+
+![Alt Text](h2.png)
+
+#### Insercion
+Para llevar a cabo la inserción de un registro, es necesario determinar a qué bucket pertenecerá en función de su llave. Esto se logra a través de la búsqueda del índice correspondiente para el registro. Una vez obtenido el índice, se procede a realizar la inserción en el bucket apropiado. Sin embargo, antes de insertar el registro, se realizan comprobaciones adicionales para garantizar la integridad de la base de datos. Esto incluye verificar que el tamaño del bucket esté dentro de límites aceptables.
+
+En caso de que el tamaño del bucket exceda un cierto factor de bloque, se evalúa si es necesario crear nuevos buckets y redistribuir los registros de acuerdo con la función hash. Todo este proceso se realiza con el objetivo de mantener la eficiencia y la organización de la base de datos al tiempo que se asegura la unicidad de las llaves primarias.
+
+![Alt Text](h3.png)
+
+#### Búsqueda
+Primero se busca el bucket asociado a través de la clave (key) en el bucket principal. Si no se encuentra en el bucket principal, se itera en los buckets siguientes (bucket.nextbucket) hasta encontrar el registro deseado.
+
+#### Eliminación
+
+La eliminación de registros implica ubicar el registro deseado en el bucket correspondiente y reemplazarlo por el último registro del mismo, actualizando el tamaño del bucket.

@@ -4,7 +4,6 @@
 
 #ifndef STATIC_HASH_STATIC_HASH_H
 #define STATIC_HASH_STATIC_HASH_H
-
 #include <fstream>
 #include <cstdint>
 using namespace std;
@@ -55,7 +54,7 @@ public:
 
     bool delete_Record(string key_record);
 
-    [[maybe_unused]] void read_Buckets();
+    void read_Buckets();
 };
 
 

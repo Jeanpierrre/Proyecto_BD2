@@ -22,7 +22,8 @@ void interactiveMenu_Avl(){
         cout << "3. Buscar por rango de VIN" << endl;
         cout<<"4. Mostrar todos los datos"<<endl;
         cout<<"5. Ingresar registro"<<endl;
-        cout << "6. Salir" << endl;
+        cout<<"6. Eliminar registro"<<endl;
+        cout << "7. Salir" << endl;
 
         int opcion;
         cin >> opcion;
@@ -30,7 +31,11 @@ void interactiveMenu_Avl(){
         switch (opcion) {
             case 1:
                 if (!archivoCargado) {
-                    writeFile("texto.txt");
+                    auto start = chrono::high_resolution_clock::now();
+                    writeFile("data.csv",200);
+                    auto finish = chrono::high_resolution_clock::now();
+                    chrono::duration<double> elapsed = finish - start;
+                    cout << "Tiempo de ejecucion: " << elapsed.count() << " s\n";
                     archivoCargado = true;
                     cout << "Archivo cargado exitosamente." << endl;
                 } else {
@@ -63,7 +68,13 @@ void interactiveMenu_Avl(){
             case 5:
                 cout<<"Ingresar registro"<<endl;
                 ingresar_registro("filenameavl.bin");
+                break;
             case 6:
+                cout<<"Eliminar registro"<<endl;
+                remove_record("filenameavl.bin");
+                cout<<"terminado"<<endl;
+                break;
+            case 7:
                 cout << "Saliendo del programa..." << endl;
                 return; // Terminar el programa
             default:

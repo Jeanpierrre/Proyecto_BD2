@@ -4,6 +4,7 @@
 #include <fstream>
 #include <sstream>
 #include <cstring>
+#include <chrono>
 using namespace std;
 unsigned long long hash_function(const std::string& key) {
     // Convierte el string en un número largo
@@ -107,6 +108,12 @@ public:
         //cout<<"SALE"<<endl;
         file.close();
         return result;
+    }
+
+    void remove_record(long long key){
+        fstream file(filename, ios::binary | ios::app | ios::in | ios::out);
+        remove_record(pos_root, key, file);
+        file.close();
     }
 
     int height(){
@@ -336,10 +343,51 @@ private:
         }
         return result;
     }
+    void remove_record(long &pos_node, long long key, fstream &file){
+        if(pos_node == -1) throw "Record not found";
+
+        file.seekg(pos_node, ios::beg);
+        RecordAvl record;
+        file.read((char*)&record, sizeof(RecordAvl));
+
+        if(hash_function(record.Vin) > key){
+            remove_record(record.left, key, file);
+        }
+        else if(hash_function(record.Vin) < key){
+            remove_record(record.right, key, file);
+        }
+        else{
+            if(record.left == -1 && record.right == -1){
+                pos_node = -1;
+            }
+            else if(record.left == -1){
+                pos_node = record.right;
+            }
+            else if(record.right == -1){
+                pos_node = record.left;
+            }
+            else{
+                long &pos_node_aux = record.left;
+                while(pos_node_aux != -1){
+                    file.seekg(pos_node_aux, ios::beg);
+                    file.read((char*)&record, sizeof(RecordAvl));
+                    pos_node_aux = record.right;
+                }
+                pos_node_aux = record.left;
+                record.left = pos_node;
+                record.right = pos_node;
+                pos_node = record.left;
+            }
+        }
+        write_file(pos_node, record);
+        updateheight(pos_node, file);
+        //balance(pos_node, file);
+    }
     
 };
-void writeFile(string filename){
+void writeFile(string filename, int i){
     try {
+        int cont = 0;
         AVLFile fileavl("filenameavl.bin");
         RecordAvl record;
         //vector<Record> records;
@@ -381,8 +429,14 @@ void writeFile(string filename){
             strncpy(registro.Vin, Vin_str.c_str(), sizeof(registro.Vin));
             strncpy(registro.Make, Make_str.c_str(), sizeof(registro.Make));
             
-
-            fileavl.insert(registro);
+            if (cont < i) {
+                fileavl.insert(registro);
+                if(cont%100==0){
+                    cout<<"Insertando: "<<cont<<endl;
+                }
+                //record.showData();
+                cont++;
+            }
 
         }
         file.close();
@@ -448,4 +502,15 @@ void ingresar_registro(string filename){
     RecordAvl record;
     record.setData();
     file.insert(record);
+}
+
+void remove_record(string filename){
+    AVLFile file(filename);
+    cout<<"---------------Eliminar---------------"<<endl;
+    cout<<"Escribe el VIM del carro que deseas eliminar"<<endl;
+    string key; 
+    cin>>key;
+    long long key_hash = hash_function(key);
+    file.remove_record(key_hash);
+    cout<<"Fin de la eliminacion"<<endl;
 }

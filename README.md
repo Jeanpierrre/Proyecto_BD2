@@ -354,5 +354,6 @@ El mini parser funciona para las consulas dadas por el profesor. Esta habilitado
 Siendo la Estructura, las diferentes tecnicas como static_hash, avl y secuencial. El valor el Vin asociado a las operaciones de eliminacion e insercion. Y para la cantidad se refiere a la cantidad de regristros para insertar de la base de datos.
 El parser sirve para poder insertar desde la base de datos una cierta cantidad, eliminar y buscar.
 
-#Observaciones
+# Observaciones
 Los archivos funcionales son los que estan en las carpetas, debido a que al correr todo junto, solo funciona el secuencial y avl( ya que estos fueron hechos con VisualStudio) con el menu, ya que StaticHash y Extendiblehash fueron hechos en Clion y tiene error al correrelo con los demas.
+Las estructuras tienen la variable llamada acceso a memoria secundaria("llamadas_mem_secundaria"), que cuenta las veces que hacemos una lectura o escritura en el archivo. 

@@ -183,7 +183,9 @@ La eliminación de registros en el AVL-File se realiza también siguiendo el pri
 ## Sequential File
 Se trata de un método simple utilizado para el almacenamiento, organización y gestión de datos mediante dos archivos primarios conectados con variables de apunte. Los datos se almacenan en forma secuencial en formato binario, de tal forma que, el registro de datos siempre será continuo y ordenado de menor a mayor según lo programado. 
 
-![Descripción de la imagen](/img/seq_main.jpeg)
+<p align="center">
+  <img src="/img/seq_main.jpeg">
+</p>
 
 ### Inserción
 La inserción para el sequential file y sus dos archivos presenta múltiples casos que deben ser analizados con anterioridad. Se recibe un registro el cual deberá posicionarse donde corresponda según su valor Key. En caso este valor sea menor que los valores ya insertados en el archivo principal, deberá utilizarse un archivo auxiliar con tamaño limitado, esto sin perder el registro anterior y el siguiente al insertado. Cuando el tamaño del archivo auxiliar exceda, se realizará una actualización en el achivo principal con todos los registros ya ordenados secuencialmente.

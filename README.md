@@ -17,7 +17,7 @@ Se emplearon conjuntos de datos de Kaggle (https://www.kaggle.com/datasets) desc
 ### Resultados esperados
 Funcionamiento adecuado de las estructuras de manejo de archivos y sus métodos asociados.
 
-## Tecnicas utilizadas
+# Tecnicas utilizadas
 
 ## Extendible hashing 
 <div align="center">

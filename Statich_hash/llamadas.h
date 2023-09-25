@@ -13,7 +13,7 @@ using namespace std;
 
 void read_dataset_ALL(string filename, static_hash &ext);
 void read_dataset_count(string filename, int i, static_hash &ext);
-void Interactive_Menu_ExtendibleHash()
+void Interactive_Menu_Hash()
 {
     static_hash prueba("data_prubea_csv.bin",8);
     int opcion;
@@ -45,7 +45,7 @@ void Interactive_Menu_ExtendibleHash()
         {
             case 1:
             {
-                //ext_hash.memory_accesses = 0;
+                prueba.llamadas_mem_secundaria  = 0;
                 int n;
                 cout << "¿Cuántos registros desea cargar? (0 si desea cargar todos)\n";
                 cin>>n;
@@ -55,7 +55,8 @@ void Interactive_Menu_ExtendibleHash()
                     read_dataset_count("tc20171021.csv",n,prueba);
                     auto end = std::chrono::high_resolution_clock::now();
                     std::chrono::duration<double> duration = end - start;
-                    //cout << "\nSecondary memory accesses are: " << ext_hash.memory_accesses << "\n";
+                    cout << "Llamadas a memoria secundaria: " << prueba.llamadas_mem_secundaria << "\n";
+
                     cout << "AGREGAR: Tiempo transcurrido: " << duration.count() << " segundos"<<endl;
 
                 }
@@ -65,7 +66,7 @@ void Interactive_Menu_ExtendibleHash()
                     read_dataset_ALL("tc20171021.csv",prueba);
                     auto end = std::chrono::high_resolution_clock::now();
                     std::chrono::duration<double> duration = end - start;
-                    // cout << "\nSecondary memory accesses are: " << ext_hash.memory_accesses << "\n";
+                    cout << "Llamadas a memoria secundaria: " << prueba.llamadas_mem_secundaria << "\n";
                     cout << "AGREGAR: Tiempo transcurrido: " << duration.count() << " segundos"<<endl;
 
                 }
@@ -73,14 +74,14 @@ void Interactive_Menu_ExtendibleHash()
                 break;
             case 2:
             {
-                //ext_hash.memory_accesses = 0;
+                prueba.llamadas_mem_secundaria  = 0;
                 Record record;
                 record.set_data();
                 auto start = std::chrono::high_resolution_clock::now();
                 prueba.insert_record(record);
                 auto end = std::chrono::high_resolution_clock::now();
                 std::chrono::duration<double> duration = end - start;
-                //cout << "\nSecondary memory accesses are: " << ext_hash.memory_accesses << "\n";
+                cout << "Llamadas a memoria secundaria: " << prueba.llamadas_mem_secundaria << "\n";
                 cout << "AGREGAR: Tiempo transcurrido: " << duration.count() << " segundos"
                      << endl;
 
@@ -88,7 +89,7 @@ void Interactive_Menu_ExtendibleHash()
                 break;
             case 3:
             {
-                //ext_hash.memory_accesses = 0;
+                prueba.llamadas_mem_secundaria  = 0;
                 string key;
                 cout << "Ingrese la clave a eliminar: ";
 
@@ -98,6 +99,8 @@ void Interactive_Menu_ExtendibleHash()
                 if (prueba.delete_Record((key))){
                     cout<<"Eliminado con exito"<<endl;
                 }
+                cout << "Llamadas a memoria secundaria: " << prueba.llamadas_mem_secundaria << "\n";
+
                 auto end = std::chrono::high_resolution_clock::now();
                 std::chrono::duration<double> duration = end - start;
                 //cout << "\nSecondary memory accesses are: " << ext_hash.memory_accesses << "\n";
@@ -107,7 +110,7 @@ void Interactive_Menu_ExtendibleHash()
                 break;
             case 4:
             {
-                //ext_hash.memory_accesses = 0;
+                prueba.llamadas_mem_secundaria  = 0;
                 string key;
                 cout << "Insertar clave para buscar:"<<endl;
                 cin.ignore();
@@ -124,6 +127,8 @@ void Interactive_Menu_ExtendibleHash()
                 else{
                     cout<<"Car no encontrado "<<endl;
                 }
+                cout << "Llamadas a memoria secundaria: " << prueba.llamadas_mem_secundaria << "\n";
+
                 auto end = std::chrono::high_resolution_clock::now();
                 std::chrono::duration<double> duration = end - start;
 

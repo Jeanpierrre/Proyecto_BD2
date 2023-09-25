@@ -12,7 +12,8 @@
 El proyecto consiste en crear tres estructuras de datos (Sequential-File, AVL-File y Extendible Hashing) junto con sus operaciones de inserción, búsqueda y eliminación. Luego, evaluar la eficiencia de cada operación utilizando gráficos que representen el tiempo de ejecución en función de la cantidad de registros.
 
 ### Descripcion del dataset
-Se emplearon conjuntos de datos de Kaggle (https://www.kaggle.com/datasets) descargados en formato CSV. Los datos se movieron a nuevos archivos con el fin de asegurar el correcto funcionamiento de los algoritmos encargados de administrar archivos físicos.
+Se emplearon conjuntos de datos de Kaggle (https://www.kaggle.com/datasets/brentpafford/true-car-listings-2017-project) descargados en formato CSV. Los datos se movieron a nuevos archivos con el fin de asegurar el correcto funcionamiento de los algoritmos encargados de administrar archivos físicos.
+La base de datos contiene información sobre vehículos usados, con detalles como ID, precio, año, millaje, ciudad, estado, VIN, marca y modelo. Sirve para identificar los vehiculos usados en EE.UU.
 
 ### Resultados esperados
 Funcionamiento adecuado de las estructuras de manejo de archivos y sus métodos asociados.

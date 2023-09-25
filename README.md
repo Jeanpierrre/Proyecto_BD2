@@ -29,6 +29,26 @@ El extendible hash es una estructura de almacenamiento dinámico. Consta de 3 el
 Para llevar a cabo la inserción de un registro, es necesario determinar a qué bucket pertenecerá en función de su llave. Esto se logra a través de la búsqueda del índice correspondiente para el registro. Una vez obtenido el índice, se procede a realizar la inserción en el bucket apropiado. Sin embargo, antes de insertar el registro, se realizan comprobaciones adicionales para garantizar la integridad de la base de datos. Esto incluye verificar que el tamaño del bucket esté dentro de límites aceptables.
 
 En caso de que el tamaño del bucket exceda un cierto factor de bloque, se evalúa si es necesario crear nuevos buckets y redistribuir los registros de acuerdo con la función hash. Todo este proceso se realiza con el objetivo de mantener la eficiencia y la organización de la base de datos al tiempo que se asegura la unicidad de las llaves primarias.
+<pre>
+  <code>
+      void extendible_hash::insert_record(Record record) {
+          int number_key= Vin_to_number(record.Vin);
+          string key_record=(BinKeyMod(number_key));// 
+          int pos=search_pos_data(key_record);
+          Bucket bucket= read_bucket(pos);
+          if(bucket.count<fb){
+              add_Record(pos,bucket,record);
+              }
+          else{
+              string vin= pos_key(key_record);
+              Index_hash in=Index_hash(vin.c_str(),hash_table_unorder[vin].first);
+              overflow(in,bucket,record);
+          }
+      }
+  </code>
+</pre>
+
+
 
 ### Búsqueda
 Primero se busca el bucket asociado a través de la clave (key) en el bucket principal. Si no se encuentra en el bucket principal, se itera en los buckets siguientes (bucket.nextbucket) hasta encontrar el registro deseado.

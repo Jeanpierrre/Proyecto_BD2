@@ -341,3 +341,17 @@ Este método nos permite eliminar un registro de forma representativa ya que rea
 <p align="center">
   <img src="/img/seq.jpeg">
 </p>
+
+
+#Parser
+El mini parser funciona para las consulas dadas por el profesor. Esta habilitado para las siguientes consultas.
+```cpp
+    string sqlStatement2 = "delete from "ESTRUCTURA" where VIN = "VALOR";// ac
+    string sqlStatement3 = "select * from "ESTRUCTURA" where VIN = "VALOR"";
+    string sqlStatement4 = "insert into "ESTRUCTURA" values "Cantidad";
+```
+Siendo la Estructura, las diferentes tecnicas como static_hash, avl y secuencial. El valor el Vin asociado a las operaciones de eliminacion e insercion. Y para la cantidad se refiere a la cantidad de regristros para insertar de la base de datos.
+El parser sirve para poder insertar desde la base de datos una cierta cantidad, eliminar y buscar.
+
+#Observaciones
+Los archivos funcionales son los que estan en las carpetas, debido a que al correr todo junto, solo funciona el secuencial y avl( ya que estos fueron hechos con VisualStudio) con el menu, ya que StaticHash y Extendiblehash fueron hechos en Clion y tiene error al correrelo con los demas.

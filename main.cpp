@@ -11,7 +11,7 @@ using namespace std;
 
 void Interactive_Menu_ExtendibleHash()
 {
-    extendible_hash prueba(8,"index_prue.bin","data_prue.bin");
+    extendible_hash prueba(6,"index_prue.bin","data_prue.bin");
     int opcion;
     bool repetir = true;
 
@@ -39,7 +39,6 @@ void Interactive_Menu_ExtendibleHash()
         {
             case 1:
             {
-                //ext_hash.memory_accesses = 0;
                 int n;
                 cout << "How many records you want to load? (0 if all)\n";
                 cout<<" 0 == ALL"<<endl;
@@ -50,7 +49,6 @@ void Interactive_Menu_ExtendibleHash()
                     read_dataset_count("prueba.csv",n,prueba);
                     auto end = std::chrono::high_resolution_clock::now();
                     std::chrono::duration<double> duration = end - start;
-                    //cout << "\nSecondary memory accesses are: " << ext_hash.memory_accesses << "\n";
                     cout << "ADD: Elapsed time: " << duration.count() << " segundos"
                          << "\n";
                 }
@@ -60,7 +58,6 @@ void Interactive_Menu_ExtendibleHash()
                     read_dataset_ALL("prueba.csv",prueba);
                     auto end = std::chrono::high_resolution_clock::now();
                      std::chrono::duration<double> duration = end - start;
-                   // cout << "\nSecondary memory accesses are: " << ext_hash.memory_accesses << "\n";
                     cout << "ADD: Elapsed time:  " << duration.count() << " seconds"
                          << "\n";
                 }
@@ -68,22 +65,18 @@ void Interactive_Menu_ExtendibleHash()
                 break;
             case 2:
             {
-                //ext_hash.memory_accesses = 0;
                 Record record;
                 record.set_data();
                 auto start = std::chrono::high_resolution_clock::now();
                 prueba.insert_record(record);
                 auto end = std::chrono::high_resolution_clock::now();
                 std::chrono::duration<double> duration = end - start;
-               //cout << "\nSecondary memory accesses are: " << ext_hash.memory_accesses << "\n";
                 cout << "ADD: Elapsed time:  " << duration.count() << " seconds"
                      << "\n";
-                //ingrese_0_para_salir(opcion);
             }
                 break;
             case 3:
             {
-                //ext_hash.memory_accesses = 0;
                 string key;
                 cout << "Insert key to remove:";
                 cin.ignore();
@@ -95,15 +88,12 @@ void Interactive_Menu_ExtendibleHash()
                 }
                 auto end = std::chrono::high_resolution_clock::now();
                 std::chrono::duration<double> duration = end - start;
-                //cout << "\nSecondary memory accesses are: " << ext_hash.memory_accesses << "\n";
                 cout << "DELETE: Elapsed time:  " << duration.count() << " seconds"
                      << "\n";
-               // ingrese_0_para_salir(opcion);
             }
                 break;
             case 4:
             {
-                //ext_hash.memory_accesses = 0;
                 string key;
                 cout << "Insert key to search:\n";
                 cin.ignore();
@@ -119,17 +109,15 @@ void Interactive_Menu_ExtendibleHash()
 
                     std::chrono::duration<double> duration = end - start;
 
-                    //cout << "\nSecondary memory accesses are: " << ext_hash.memory_accesses << "\n";
                     cout << "SEARCH: Elapsed time:  " << duration.count() << " seconds"
                          << "\n";
                 }
-              //  ingrese_0_para_salir(opcion);
             }
                 break;
             case 5:
             {
                 prueba.read_Buckets();
-               // ingrese_0_para_salir(opcion);
+
             }
                 break;
             case 0:

@@ -236,8 +236,11 @@ int main() {
     cout<<"Seleccione el tipo de estructura que desea utilizar"<<endl;
     cout<<"1. Extendible Hash"<<endl;
     cout<<"2. AVL"<<endl;
+    cout <<"3. Sequential File" << endl;
+
     int opcion;
-    cin>>opcion;
+    cin >> opcion;
+    
     while(opcion!=1 and opcion!=2){
         cerr<<"Ingrese una opcion valida"<<endl;
         cin>>opcion;
@@ -252,7 +255,7 @@ int main() {
         interactiveMenu_Avl();
     }
     else {
-        cout << "Ha seleccionado Sequential File" << endl;
+        cout << "Ha seleccionado Sequential File" << endl << endl;
         Sequential seq("data.dat");
 
         while (true) {
@@ -260,11 +263,30 @@ int main() {
 
             if (op == 1) {
                 cout << "Cargando data from .cvs ... " << endl << endl;
+                auto start = std::chrono::high_resolution_clock::now();
+
                 read_dataset_count("prueba.csv", seq);
+
+                auto end = std::chrono::high_resolution_clock::now();
+                std::chrono::duration<double> duration = end - start;
+                cout << endl;
+                cout << "ADD FROM CSV TIME: " << duration.count() << "s";
                 cout << endl;
 
             } else if (op == 2) {
                 cout << "Add record ... " << endl << endl;
+                Sequential_Record rx;
+                auto start = std::chrono::high_resolution_clock::now();
+                
+                rx.setData();
+                seq.add(rx);
+
+                auto end = std::chrono::high_resolution_clock::now();
+                std::chrono::duration<double> duration = end - start;
+                cout << endl;
+                cout << "Data añadida a base de datos ..." << endl;
+                cout << "SINGLE ADD TIME: " << duration.count() << "s";
+                cout << endl;
 
             } else if (op == 3) {
                 cout << "Remove record from data ... " << endl << endl;
@@ -277,7 +299,13 @@ int main() {
 
             } else if (op == 6) {
                 cout << "Show all record in data" << endl << endl;
+                auto start = std::chrono::high_resolution_clock::now();
+
                 seq.showRecords();
+
+                auto end = std::chrono::high_resolution_clock::now();
+                std::chrono::duration<double> duration = end - start;
+                cout << "SHOW RECORDS TIME: " << duration.count() << "s";
                 cout << endl;
 
             } else {

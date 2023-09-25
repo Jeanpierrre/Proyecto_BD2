@@ -7,9 +7,10 @@
 #include <vector>
 #include<windows.h>
 #include <iostream>
+#include <chrono>
 using namespace std;
 
-class Record {
+class Sequential_Record {
     int id;
     int price;
     int year;
@@ -21,7 +22,7 @@ class Record {
     char file = 'd';
 
 public:
-    Record() {
+    Sequential_Record() {
         this->id = 0;
         this->price = 0;
         this->year = 0;
@@ -32,7 +33,7 @@ public:
         strcpy(this->VIN, v.c_str());
         strcpy(this->make, m.c_str());
     }
-    Record(int _id, int _price, int _year, string _state, string _VIN, string _make) { 
+    Sequential_Record(int _id, int _price, int _year, string _state, string _VIN, string _make) { 
         this->id = _id;
         this->price = _price;
         this->year = _year;
@@ -44,7 +45,7 @@ public:
         char file = 'd';
     }
 
-    bool operator<(const Record &a) { return string(this->VIN) < string(a.VIN); }
+    bool operator<(const Sequential_Record &a) { return string(this->VIN) < string(a.VIN); }
 
     void setData() {
         int _id;
@@ -124,7 +125,7 @@ private:
     long sizeData = 0;
     long sizeAux = 0;
 
-    const long sizeRecord = sizeof(Record);
+    const long sizeRecord = sizeof(Sequential_Record);
 
     long fileSize (string name) {
         fstream temp(name, ios::binary | ios::in | ios::out);
@@ -133,7 +134,7 @@ private:
         temp.seekg(0, ios::end);
         auto end = temp.tellg();
         temp.close();
-        return (long)(end - start) / sizeof(Record);
+        return (long)(end - start) / sizeof(Sequential_Record);
     }
 
     void rebuild() {
@@ -151,9 +152,9 @@ private:
                 fstream temp_data(newName, ios::binary | ios::in | ios::out);
                 if (!temp_data.is_open()) cerr << "Error - rebuild" << endl;
                 else {
-                    Record rx;
+                    Sequential_Record rx;
                     data.seekg(0, ios::beg);
-                    data.read((char *)&rx, sizeof(Record));
+                    data.read((char *)&rx, sizeof(Sequential_Record));
 
                     int next = 0;
                     char file = 'd';
@@ -163,30 +164,30 @@ private:
                     sizeData = 0;
                     do {
                         data.seekg(next, ios::beg);
-                        data.read((char *)&rx, sizeof(Record));
+                        data.read((char *)&rx, sizeof(Sequential_Record));
                         next = rx.getNext();
                         file = rx.getFile();
 
                         rx.setNext(fn_pos + sizeRecord, 'd');
                         temp_data.seekp(fn_pos, ios::beg);
-                        temp_data.write((char *)&rx, sizeof(Record));
+                        temp_data.write((char *)&rx, sizeof(Sequential_Record));
                         sizeData++;
                         fn_pos += sizeRecord;
 
                         if (file == 'a') {
-                            vector<Record> in_aux;
+                            vector<Sequential_Record> in_aux;
                             do {
                                 temp_data.seekg(next, ios::beg);
-                                temp_data.read((char *)&rx, sizeof(Record));
+                                temp_data.read((char *)&rx, sizeof(Sequential_Record));
                                 in_aux.push_back(rx);
                                 next = rx.getNext();
                                 file = rx.getFile();
                             } while (file == 'a' && next != -1);
-                            sort(in_aux.begin(), in_aux.end(), comparator<Record>);
-                            for (Record r : in_aux) {
+                            sort(in_aux.begin(), in_aux.end(), comparator<Sequential_Record>);
+                            for (Sequential_Record r : in_aux) {
                                 r.setNext(fn_pos + sizeRecord, 'd');
                                 temp_data.seekp(fn_pos, ios::beg);
-                                temp_data.write((char *)&r, sizeof(Record));
+                                temp_data.write((char *)&r, sizeof(Sequential_Record));
                                 sizeData++;
                                 fn_pos += sizeRecord;
                             }
@@ -194,11 +195,11 @@ private:
                     } while (next != -1);
 
                     temp_data.seekg(sizeRecord * (sizeData - 1), ios::beg);
-                    temp_data.read((char *)&rx, sizeof(Record));
+                    temp_data.read((char *)&rx, sizeof(Sequential_Record));
                     rx.setNext(-1, 'd');
 
                     temp_data.seekp(sizeRecord * (sizeData - 1), ios::beg);
-                    temp_data.write((char *)&rx, sizeof(Record));
+                    temp_data.write((char *)&rx, sizeof(Sequential_Record));
                     temp_data.close();
                 }
                 aux_data.close();
@@ -216,23 +217,21 @@ private:
         strcpy(newNameArr, newName.c_str());
     }
 
-    long binarySearch(string key)
-    {
+    long binarySearch(string key) {
         long res = 0;
         fstream data (data_file_name, ios::in | ios::out | ios::binary);
-        if (data.is_open()) {
-            Record tmp;
-            //Menor
+        if (!data.is_open()) cerr << "Error - binarySearch" << endl;
+        else {
+            Sequential_Record tmp;
             data.seekg(0, ios::beg);
-            data.read((char*) &tmp, sizeof(Record));
+            data.read((char*) &tmp, sizeof(Sequential_Record));
             if (key <= tmp.getKey())
             {
                 data.close();
                 return 0;
             }
-            //Mayor
             data.seekg((sizeData - 1) * sizeRecord, ios::beg);
-            data.read((char*) &tmp, sizeof(Record));
+            data.read((char*) &tmp, sizeof(Sequential_Record));
             if (key >= tmp.getKey())
             {
                 data.close();
@@ -246,8 +245,7 @@ private:
                 if (mi == lo)
                     break;
                 data.seekg(mi * sizeRecord, ios::beg);
-                //read(f, tmp);
-                data.read((char*) &tmp, sizeof(Record));
+                data.read((char*) &tmp, sizeof(Sequential_Record));
                 if (key == tmp.getKey())
                     break;
                 else if (key < tmp.getKey())
@@ -255,25 +253,22 @@ private:
                 else
                     lo = mi;
             }
-            //Retroceder hasta encontrar un data válido
             data.seekg(mi * sizeRecord, ios::beg);
-            data.read((char*) &tmp, sizeof(Record));
+            data.read((char*) &tmp, sizeof(Sequential_Record));
             while (tmp.getNext() == -2)
             {
                 mi--;
                 data.seekg(mi * sizeRecord, ios::beg);
-                data.read((char*) &tmp, sizeof(Record));
+                data.read((char*) &tmp, sizeof(Sequential_Record));
             }
             data.close();
             return mi * sizeRecord;
         }
-        else cout << "SequentialError al abrir data en binarySearch\n";
         return res;
     }
 
 public:
-    Sequential(string name)
-    {
+    Sequential(string name) {
         this->data_file_name = name;
         this->aux_file_name = "aux_" + name;
 
@@ -286,25 +281,14 @@ public:
         sizeAux = fileSize(aux_file_name);
     }
 
-    int add_vector(vector<Record> records)
-    {
-        int accesos = 0;
-        sort(records.begin(), records.end(), comparator<Record>);
-        for (Record record : records) {
-            add(record);
-        }
-        return accesos;
-    }
-
-    void add(Record &record)
-    {
+    void add(Sequential_Record &record) {
         record.setNext(-1, 'd');
         if (sizeData == 0) {
             fstream data(this->data_file_name, ios::binary | ios::in | ios::out);
             if (!data.is_open()) cerr << "Error - Add.1" << endl;
             else {
                 data.seekp(0, ios::beg);
-                data.write((char *)&record, sizeof(Record));
+                data.write((char *)&record, sizeof(Sequential_Record));
                 sizeData++;
                 data.close();
                 return;
@@ -316,18 +300,18 @@ public:
         fstream data(this->data_file_name, ios::binary | ios::in | ios::out);
         if (!data.is_open()) cerr << "Error - Add.2" << endl;
         else {
-            Record tmp;
+            Sequential_Record tmp;
             data.seekg(pos);
-            data.read((char *)&tmp, sizeof(Record));
+            data.read((char *)&tmp, sizeof(Sequential_Record));
 
             if (pos == 0 && record.getKey() < tmp.getKey()) {
                 if (tmp.getNext() == -1) {
                     long finalPos = sizeRecord;
                     data.seekp(finalPos, ios::end);
                     record.setNext(finalPos, 'd');
-                    data.write((char *)&tmp, sizeof(Record));
+                    data.write((char *)&tmp, sizeof(Sequential_Record));
                     data.seekp(pos, ios::beg);
-                    data.write((char *)&record, sizeof(Record));
+                    data.write((char *)&record, sizeof(Sequential_Record));
                     
                     sizeData++;
                 } else {
@@ -338,10 +322,10 @@ public:
                         auto finalPosition = a_data.tellp();
                         record.setNext(finalPosition, 'a');
 
-                        a_data.write((char *)&tmp, sizeof(Record));
+                        a_data.write((char *)&tmp, sizeof(Sequential_Record));
 
                         data.seekp(pos, ios::beg);
-                        data.write((char *)&record, sizeof(Record));
+                        data.write((char *)&record, sizeof(Sequential_Record));
 
                         sizeAux++;
                         a_data.close();
@@ -356,26 +340,26 @@ public:
                 if (tmp.getNext() == -1) {
                     data.seekp(0, ios::end);
                     auto finalPosition = data.tellp();
-                    data.write((char *)&record, sizeof(Record));
+                    data.write((char *)&record, sizeof(Sequential_Record));
 
                     tmp.setNext(finalPosition, 'd');
                     data.seekp(pos);
-                    data.write((char *)&tmp, sizeof(Record));
+                    data.write((char *)&tmp, sizeof(Sequential_Record));
 
                     tmp.showData();
 
                     sizeData++;
                 } else {
-                    Record tmpNext;
+                    Sequential_Record tmpNext;
                     data.seekg(pos + sizeData);
-                    data.write((char *)&tmpNext, sizeof(Record));
+                    data.write((char *)&tmpNext, sizeof(Sequential_Record));
                     if (tmpNext.getNext() == -2) {
                         record.setNext(tmp.getNext(), tmp.getNext());
                         tmp.setNext(pos + sizeData, 'd');
                         data.seekp(pos);
-                        data.write((char *)&tmp, sizeof(Record));
+                        data.write((char *)&tmp, sizeof(Sequential_Record));
                         data.seekp(pos + sizeData);
-                        data.write((char *)&record, sizeof(Record));
+                        data.write((char *)&record, sizeof(Sequential_Record));
                         sizeData++;
                     } else {
                         fstream a_data(this->aux_file_name, ios::binary | ios::in | ios::out);
@@ -385,9 +369,9 @@ public:
                             auto finalPosition = a_data.tellp();
                             record.setNext(tmp.getNext(), tmp.getNext());
                             tmp.setNext(finalPosition, 'a');
-                            a_data.write((char *)&record, sizeof(Record));
+                            a_data.write((char *)&record, sizeof(Sequential_Record));
                             data.seekp(pos, ios::beg);
-                            data.write((char *)&tmp, sizeof(Record));
+                            data.write((char *)&tmp, sizeof(Sequential_Record));
                             sizeAux++;
                             a_data.close();
 
@@ -403,23 +387,23 @@ public:
         }
     }
 
-    Record search(string key) {
-        Record empty;
+    Sequential_Record search(string key) {
+        Sequential_Record empty;
     
         return empty;
     }
 
-    vector<Record> search(char begin[40], char end[40]) {
-        vector<Record> result;
+    vector<Sequential_Record> search(string begin_key, string end_key) {
+        vector<Sequential_Record> result;
         
         return result;
     }
 
-    bool erase(char key[40]) {
+    bool erase(string key) {
         return false;
     }
     
-    void showRecords(){
+    void showRecords() {
         int cont = 1;
         fstream data(data_file_name, ios::binary | ios::in | ios::out);
         if (!data.is_open()) cerr << "Error - showRecord" << endl;
@@ -427,9 +411,9 @@ public:
             fstream a_data(aux_file_name, ios::binary | ios::in | ios::out);
             if (!a_data.is_open()) cerr << "Error - showRecord" << endl;
             else {
-                Record tmp;
+                Sequential_Record tmp;
                 data.seekg(0, ios::beg);
-                data.read((char*) &tmp, sizeof(Record));
+                data.read((char*) &tmp, sizeof(Sequential_Record));
                 long next = tmp.getNext();
                 char file = tmp.getFile();
                 
@@ -438,11 +422,11 @@ public:
                 while (next != -1) {
                     if (file == 'd') {
                         data.seekg(next, ios::beg);
-                        data.read((char*) &tmp, sizeof(Record)); 
+                        data.read((char*) &tmp, sizeof(Sequential_Record)); 
                     }
                     else if (file == 'a') {
                         a_data.seekg(next, ios::beg);
-                        a_data.read((char*) &tmp, sizeof(Record));
+                        a_data.read((char*) &tmp, sizeof(Sequential_Record));
                     }
                     else {
                         data.close(); a_data.close();
@@ -473,7 +457,7 @@ void read_dataset_count(string filename, Sequential &ext) {
 
     // Lee la primera línea para ignorar los encabezados
     getline(fio, line);
-    vector<Record> out;
+    vector<Sequential_Record> out;
 
     while (getline(fio, line)) {
         int id, price, year = 0;
@@ -498,8 +482,11 @@ void read_dataset_count(string filename, Sequential &ext) {
         _price >> price;
         _year >> year;
 
-        Record record(id, price, year, STATE, VIN, MAKE);
+        Sequential_Record record(id, price, year, STATE, VIN, MAKE);
         out.push_back(record);
     }
-    int acc = ext.add_vector(out);
+    sort(out.begin(), out.end(), comparator<Sequential_Record>);
+    for (Sequential_Record record : out) {
+        ext.add(record);
+    }
 }

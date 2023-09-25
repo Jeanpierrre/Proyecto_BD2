@@ -21,6 +21,6 @@ void parser_initial(){
 };
 */
 int main() {
-    //Interactive_Menu_ExtendibleHash();
+    Interactive_Menu_Hash();
    // parser_initial();
 }

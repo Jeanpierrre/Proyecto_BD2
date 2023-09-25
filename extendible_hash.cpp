@@ -19,11 +19,11 @@ void extendible_hash::insert_bucket(Bucket &buc) {
 int extendible_hash::size_index_hash() {
     fstream fileIndex(this->File_hash_index, ios::app | ios::binary );
     if (!fileIndex.is_open()) {
-        cout << "Error al abrir el archivo." << endl;
+     //   cout << "Error al abrir el archivo." << endl;
         return -1;
     }
     fileIndex.seekg(0, ios::end);
-    cout<<"tamaño del archivo index"<<fileIndex.tellg()<<endl;
+  //  cout<<"tamaño del archivo index"<<fileIndex.tellg()<<endl;
     return fileIndex.tellg();
 }
 
@@ -35,12 +35,12 @@ int extendible_hash::size_data() {
 }
 
 void extendible_hash::initialize_hash_structure(string key, int pos) {
-    cout<<"Indice : "<<key<<endl;
+  //  cout<<"Indice : "<<key<<endl;
     //cantidad de registros
-    cout<<"Bucket enlazado: ";
-    cout<<"size data en key: "<<key<<" - "<<size_data()<<endl;
+   // cout<<"Bucket enlazado: ";
+    //cout<<"size data en key: "<<key<<" - "<<size_data()<<endl;
     int pos_Data=size_data();
-    cout<<pos_Data<<endl;
+   // cout<<pos_Data<<endl;
     Index_hash indice= Index_hash((key.c_str()),pos_Data);//guardar indice ejem 0 con la pos 0 del archivo
 
     hash_table_unorder[key]=make_pair(pos_Data,can_index);
@@ -59,14 +59,14 @@ void extendible_hash::initialize_hash_structure(string key, int pos) {
 
 
 
-    cout << "SACADO BIEN" << endl;
-    prueba.index_cout();
+  //  cout << "SACADO BIEN" << endl;
+    //prueba.index_cout();
 
-    cout << "Sacado Fin" << endl;
+    //cout << "Sacado Fin" << endl;
 
     Bucket bucket=Bucket(fb);
-    cout<<"Initialice: "<<bucket.sizeofBucket()<<endl;
-    cout<<"PESO BLOQUE:"<<bucket.sizeofBucket()<<endl;
+    //cout<<"Initialice: "<<bucket.sizeofBucket()<<endl;
+    //<<"PESO BLOQUE:"<<bucket.sizeofBucket()<<endl;
     insert_bucket(bucket);
 
 
@@ -83,25 +83,25 @@ extendible_hash::extendible_hash(int D, string index, string data) {
     this-> D=D;
 
     if(size_index_hash()==0){
-        cout<<"Archivo vacio"<<endl;
+        //cout<<"Archivo vacio"<<endl;
         Index_count();
         //inicializar indices
         initialize_hash_structure("0",0);
         initialize_hash_structure("1",1);
-        cout<<"INDICES GUARDADOS: "<<endl;
+       // cout<<"INDICES GUARDADOS: "<<endl;
         //cargar_indices_a_table();
     }
     else{
-        cout<<"Cargar indices"<<endl;
+        //cout<<"Cargar indices"<<endl;
         cargar_indices_a_table();
         cargar_cabezas_a_table();
-        cout<<"Indices cargados"<<endl;
+       // cout<<"Indices cargados"<<endl;
 
-        cout<<"Cabezas"<<endl;
+        cout<<"Cabezas: "<<endl;
         for (const auto& pair : table_cabezas){
             cout<<pair.first<<" - "<<pair.second<<endl;
         }
-        cout<<"indices"<<endl;
+        cout<<"indices: "<<endl;
         for (const auto& pair : hash_table_unorder){
             const std::string& clave = pair.first;
             const std::pair<int, int>& valor = pair.second;
@@ -109,7 +109,7 @@ extendible_hash::extendible_hash(int D, string index, string data) {
             std::cout << "Clave: " << clave << ", Valor: (" << valor.first << ", " << valor.second << ")" << std::endl;
             //cout<<pair.first<<" - "<<pair.second<<endl;
         }
-        cout<<"FIn"<<endl;
+       //cout<<"FIn"<<endl;
 
     }
 
@@ -155,16 +155,18 @@ void extendible_hash::read_Buckets() {
     Bucket buc(fb);
     int contador=0;
     for(int i=0;i<pos_Data;i++){
-        cout<<"Read_bucket"<<endl;
-        cout<<"I"<<i<<endl;
+        //cout<<"Read_bucket"<<endl;
+        cout<<"En el bucket i: "<<i<<endl;
         file.seekg(i*bloque.sizeofBucket(), ios::beg);//fixed length record
         file.read(reinterpret_cast<char*>(&buc), bloque.sizeofBucket());
         buc.allcout();
-
+        cout<<endl;
+        cout<<"Registros: "<<endl;
         for(int i=0;i<buc.count;i++){
             Record record=buc.records[i];
             contador++;
             record.showData();
+            cout<<endl;
         }
 
     }
@@ -194,11 +196,7 @@ unsigned long long extendible_hash::Vin_to_number(string key) {
 }
 
 
-int extendible_hash::hash_function(int key) {
 
-
-    return 0;
-}
 
 void extendible_hash::Index_count() {
     //ofstream fileData(this->File_data, ios::app | ios::binary);
@@ -212,21 +210,21 @@ void extendible_hash::Index_count() {
     fileIndex.write((char*)&cabeza_0, sizeof(int));
     fileIndex.write((char*)&cabeza_1, sizeof(int));
     fileIndex.close();
-
+/*
     // Reabrir el archivo en modo lectura
     fstream fileIndexs(this->File_hash_index,  ios::in |ios::binary);
 
     int prueba;
     fileIndexs.read((char*)&prueba, sizeof(int));
-    cout << "prueba 1: " << prueba << endl;
+   // cout << "prueba 1: " << prueba << endl;
     fileIndexs.read((char*)&prueba, sizeof(int));
-    cout << "prueba 2: " << prueba << endl;
-    fileIndexs.close();
+    //cout << "prueba 2: " << prueba << endl;
+    fileIndexs.close();*/
 }
 
 void extendible_hash::SaveIndex(Index_hash indice) {
     fstream fileIndex(this->File_hash_index, ios::app | ios::binary | ios::out);
-    fileIndex.write((char*)&indice, sizeof(Index_hash));
+    fileIndex.write(reinterpret_cast<char*>(&indice), sizeof(Index_hash));
     fileIndex.close();
     can_index=can_index+1;
 
@@ -289,31 +287,31 @@ bool extendible_hash::search_record(string vin_key) {
 
 void extendible_hash::insert_record(Record record) {
     //primero transformar el vin y sacar su key
-    cout<<"Antes del error"<<record.Vin<<endl;
+    //cout<<"Antes del error"<<record.Vin<<endl;
     int number_key= Vin_to_number(record.Vin);
     string key_record=(BinKeyMod(number_key));//funcion hash
     //ahora tocara validar el indice donde va el key
 
 
     int pos=search_pos_data(key_record);//paso el binario
-    cout<<"Insert - pos"<<pos<<endl;
+   // cout<<"Insert - pos"<<pos<<endl;
     //validar bucket
     Bucket bucket= read_bucket(pos);
-    cout<<"Bucket sacado"<<endl;
+    //cout<<"Bucket sacado"<<endl;
     //cout<<"VIN: "<<bucket.records[0].Vin<<endl;
     if(bucket.count<fb){
         add_Record(pos,bucket,record);
-        cout<<"Agregado"<<endl;
-        cout<<"VIN: "<<bucket.records[0].Vin<<endl;
+       // cout<<"Agregado"<<endl;
+        //cout<<"VIN: "<<bucket.records[0].Vin<<endl;
     }
 
     else{
-        cout<<"overflow"<<endl;
+        //cout<<"overflow"<<endl;
 
         string vin= pos_key(key_record);
         Index_hash in=Index_hash(vin.c_str(),hash_table_unorder[vin].first);
-        cout<<"Vin - over: "<<vin<<endl;
-        in.index_cout();
+       // cout<<"Vin - over: "<<vin<<endl;
+       // in.index_cout();
         overflow(in,bucket,record);
     }
 
@@ -321,8 +319,8 @@ void extendible_hash::insert_record(Record record) {
 }
 
 int extendible_hash::search_pos_data(string key) {
-    cout<<"Search_pos_data"<<endl;
-    cout<<"Binario: "<<key<<endl;
+   // cout<<"Search_pos_data"<<endl;
+   // cout<<"Binario: "<<key<<endl;
     //validar termino del key
     string val_in_index= pos_key(key);
     int pos=hash_table_unorder[val_in_index].first;
@@ -370,7 +368,7 @@ int extendible_hash::search_pos_data(string key) {
             string validar=key_pair.substr(key_pair.length() - key.length());
             cout<<"Validar: "<<validar<<endl;
             if(validar==key){
-                cout<<"Key -validar: "<<key<<endl;
+                <<"Key -validar: "<<key<<endl;
                 return hash_table_unorder[pair.first];
             }
         }
@@ -380,14 +378,14 @@ int extendible_hash::search_pos_data(string key) {
 
 Bucket extendible_hash::read_bucket(int pos) {
 
-    cout<<"Read_bucket"<<endl;
+   // cout<<"Read_bucket"<<endl;
     ifstream file(this->File_data, ios::binary);
     if(!file.is_open()) throw ("No se pudo abrir el archivo");
     Bucket pepelen(fb);
     file.seekg(pos, ios::beg);//fixed length record
     file.read(reinterpret_cast<char*>(&pepelen), bloque.sizeofBucket());
-    cout<<"mostrar bucket leido: "<<endl;
-    pepelen.allcout();
+    //cout<<"mostrar bucket leido: "<<endl;
+   // pepelen.allcout();
     file.close();
 
     return pepelen;
@@ -410,9 +408,9 @@ Bucket extendible_hash::read_bucket(int pos) {
 
 void extendible_hash::add_Record(int pos, Bucket &bucket, Record record) {
     bucket.records[bucket.count] = record;
-    cout<<"COUNT ANTES"<<bucket.count<<endl;
+   // cout<<"COUNT ANTES"<<bucket.count<<endl;
     bucket.count++;
-    cout<<"COUNT DESPUES"<<bucket.count<<endl;
+    //cout<<"COUNT DESPUES"<<bucket.count<<endl;
 
     write_bucket(bucket, pos);
 }
@@ -465,60 +463,100 @@ void extendible_hash::cargar_indices_a_table() {
 }
 
 Index_hash extendible_hash::read_index(int pos) {
-    cout<<"Read_ index"<<endl;
+    //cout<<"Read_ index"<<endl;
     ifstream file(this->File_hash_index,ios::in | ios::binary);
     if(!file.is_open()) throw ("No se pudo abrir el archivo");
     Index_hash index;
     file.seekg(pos*sizeof(Index_hash)+(sizeof(int) * 2), ios::beg);
     file.read((char *)&index, sizeof(Index_hash));
     file.close();
-    cout<<"Indice leido"<<endl;
-    index.index_cout();
-    cout<<"Salir read"<<endl;
+   // cout<<"Indice leido"<<endl;
+   // cout<<"Salir read"<<endl;
     return index;
 
 }
 
 void extendible_hash::cargar_cabezas_a_table() {
-    cout<<"CABEZAS"<<endl;
+    //cout<<"CABEZAS"<<endl;
     fstream fileIndexs(this->File_hash_index,  ios::in |ios::binary);
 
     int prueba;
     fileIndexs.read((char*)&prueba, sizeof(int));
-    cout << "Cabeza 0: " << prueba << endl;
+   // cout << "Cabeza 0: " << prueba << endl;
     table_cabezas["0's"]=prueba;
     fileIndexs.read((char*)&prueba, sizeof(int));
-    cout << "Cabeza 1: " << prueba << endl;
+    //cout << "Cabeza 1: " << prueba << endl;
     table_cabezas["1's"]=prueba;
     fileIndexs.close();
 
 
 }
-
 string extendible_hash::pos_key(string key) {
-    string search_key = key;
-    string result;
 
-    // Perform the initial search using the entire key
-    result = verr(search_key);
-    if (result == key)
-        return result;
+    //sacar si va a los bucket 0 o los bucket 1
+    char last_char = key[key.length() - 1];
+    string key_val = std::string(1, last_char) + "'s";
+  //  cout<<"Ultimo digito"<<endl;
+   // cout<<"Key_val: "<<key<<endl;
+   // cout<<"key_ len "<<key.length()<<endl;
+    int bits_leer=table_cabezas[key_val];
+    //cout<<"bits_leer: "<<bits_leer<<endl;
+    //Index_hash indi;
 
-    // Iterate through the key bits and perform subsequent searches
-    for (int i = key.length() - 1; i >= 0; i--)
-    {
-        // Toggle the i-th bit
-        search_key[i] = (search_key[i] == '0') ? '1' : '0';
+    //INDICE  1
+    //KEY 101
+    if(bits_leer<=key.length()){
+       // cout<<"key mayor"<<endl;
+        string index_val=key.substr(key.length() - bits_leer);
+       // cout<<"INDEX VAL "<<index_val<<endl;
 
-        result = verr(search_key);
-        if (result == search_key)
-            break;
+        //indice, con posicion en memoria del archivo
+        //Index_hash pepe(index_val.c_str(),hash_table_unorder[index_val]);
+        return index_val;
+    }
+        //1
+        //1
+    else if(bits_leer==key.length()){
+       // cout<<"key igual"<<endl;
+
+        return key;
+    }
+        //INDICE 10111
+        //KEY 11
+
+    else if(key.length()<bits_leer){
+        //cout<<"key menor"<<endl;
+
+        //cuando es mayor
+        for (const auto& pair : hash_table_unorder){
+            //key = pair.first
+            string key_pair=pair.first;
+            //cout<<endl;
+          //  cout<<"Key_pair: "<<key_pair<<endl;
+           // cout<<"Key_pair len"<<key_pair.length()<<endl;
+            if(key_pair.length()>key.length()){
+                string validar=key_pair.substr(key_pair.length() - key.length());
+               // cout<<"Validar: "<<validar<<endl;
+                if(validar==key){
+                   // cout<<"Key -validar: "<<key<<endl;
+                    return pair.first;
+                }
+            }
+
+        }
+
+    }
+    else{
+        for (const auto& pair : hash_table_unorder) {
+
+            if(pair.first[pair.first.length()-1]==last_char){
+                return pair.first;
+            }
+        }
     }
 
-    return result;
-    cout<<"SIN RETORNO Xd"<<endl;
 }
-
+/*
 Index_hash extendible_hash::search_index(string key) {
     cout<<"key en bruto: "<<key<<endl;
     string lugar_index=pos_key(key);//con esto se a que indice va esta key
@@ -543,61 +581,63 @@ Index_hash extendible_hash::search_index(string key) {
 
 
 }
-
+*/
 void extendible_hash::overflow(Index_hash &index, Bucket &bucket, Record &record) {
     if (bucket.d < D) {//en este caso, entonces tocara enlazar nomas :)
         /// Y se modifica el indice,
 
         string new_index_key=zero_initial+index.key; //can_index=pos index
         string new_index_one=one_initial+index.key;
-        cout<<"zero_initial "<<new_index_key<<endl;
-        cout<<"one_initial "<<new_index_one<<endl;
+       // cout<<"zero_initial "<<new_index_key<<endl;
+       // cout<<"one_initial "<<new_index_one<<endl;
 
         cout<<endl;
         cout<<endl;
         cout<<endl;
-        cout<<"#indices: "<<(size_index_hash()- (sizeof(int)*2))/ sizeof(Index_hash)<<endl;
-        cout<<"can index"<<can_index<<endl;
 
-        cout<<"Modificar"<<endl;
+      //  cout<<"#indices Initial: "<<(size_index_hash()- (sizeof(int)*2))/ sizeof(Index_hash)<<endl;
+       // cout<<"can index"<<can_index<<endl;
+
+        //cout<<"Modificar"<<endl;
         modificar_index(new_index_key,index.key,index);
-        cout<<"#indices: "<<(size_index_hash()- (sizeof(int)*2))/ sizeof(Index_hash)<<endl;
-        cout<<"can index"<<can_index<<endl;
+       // cout<<"#indices inital change: "<<(size_index_hash()- (sizeof(int)*2))/ sizeof(Index_hash)<<endl;
+        //cout<<"can index"<<can_index<<endl;
 
 
         cout<<endl;
         cout<<endl;
         cout<<endl;
         cout<<endl;
-        cout<<"#indices: "<<(size_index_hash()- (sizeof(int)*2))/ sizeof(Index_hash)<<endl;
-        cout<<"can index"<<can_index<<endl;
 
-        cout<<"Create new"<<endl;
+
+        //cout<<"Create new"<<endl;
         Index_hash new_index= create_index(new_index_one);
-        cout<<"#indices: "<<(size_index_hash()- (sizeof(int)*2))/ sizeof(Index_hash)<<endl;
-        cout<<"can index: "<<can_index<<endl;
+
+      //  cout<<"#indices + new: "<<(size_index_hash()- (sizeof(int)*2))/ sizeof(Index_hash)<<endl;
+      //  cout<<"can index: "<<can_index<<endl;
 
 
-        cout<<"NUEVO INDEX"<<endl;
-        new_index.index_cout();
-        cout<<"FIN"<<endl;
+       // cout<<"NUEVO INDEX"<<endl;
+        //new_index.index_cout();
+        //cout<<"FIN"<<endl;
         if(table_cabezas["0's"] < D && table_cabezas["1's"] <D){
-            change_cabezas(new_index);
+            change_cabezas(index);
 
         }
-        cout<<"New bucket?? "<<endl;
+        //cout<<"New bucket?? "<<endl;
         //Bucket new_bucket = read_bucket(new_index.pos_Data);
         Bucket new_bucket = Bucket(fb);
         //int pos=search_pos_data(index.key);
-        cout<<"Resize"<<endl;
+        //cout<<"Resize"<<endl;
         resize(index,bucket,new_bucket,new_index);
-        cout<<"Resize"<<endl;
+        //cout<<"Resize"<<endl;
 
         int number_key= Vin_to_number(record.Vin);
+
         string key_record=(BinKeyMod(number_key));
         string vin= pos_key(key_record);
         if(vin==index.key){
-            cout<<"OLD BUCKET - KEY: "<<index.key<<endl;
+            //cout<<"OLD BUCKET - KEY: "<<index.key<<endl;
             if (bucket.count < fb)
                 add_Record(index.pos_Data, bucket, record);
             else
@@ -605,7 +645,7 @@ void extendible_hash::overflow(Index_hash &index, Bucket &bucket, Record &record
 
         }
         else{
-            cout<<"New BUCKET - KEY: "<<new_index.key<<endl;
+            //cout<<"New BUCKET - KEY: "<<new_index.key<<endl;
 
             if (new_bucket.count < fb)
                 add_Record(new_index.pos_Data, new_bucket, record);
@@ -615,7 +655,7 @@ void extendible_hash::overflow(Index_hash &index, Bucket &bucket, Record &record
 
     }
     else{
-
+       // cout<<"Encadenaar ps"<<endl;
         while(bucket.nextBucket!=-1){
             bucket= read_bucket(bucket.nextBucket);
         }
@@ -642,10 +682,10 @@ void extendible_hash::overflow(Index_hash &index, Bucket &bucket, Record &record
 
 void extendible_hash::modificar_index( string new_key,string old_key,Index_hash &old_index) {
     int pos_index=hash_table_unorder[old_key].second;//saco el numero del key metido, entonces ahora lo
-    cout<<"En archivo index: "<<pos_index<<endl;
+    //cout<<"En archivo index: "<<pos_index<<endl;
     //sobreescribo con una nueva key pero apuntando al mismo bucket
     int pos_data=hash_table_unorder[old_key].first;
-    cout<<pos_index<<" "<<new_key<<" "<<pos_data<<" "<<endl;
+   // cout<<pos_index<<" "<<new_key<<" "<<pos_data<<" "<<endl;
 
     change_index(pos_index, new_key, pos_data, old_index);
     //toca hacer el cambio en el unordered_map
@@ -656,13 +696,17 @@ void extendible_hash::modificar_index( string new_key,string old_key,Index_hash 
 }
 
 void extendible_hash::change_index(int pos, string new_key, int pos_data,Index_hash &old_index) {
-        cout<<"Change_index"<<endl;
+        //cout<<"Change_index"<<endl;
         ofstream file(this->File_hash_index,std::ios::binary | std::ios::in | std::ios::out);
         if(!file.is_open()) throw ("No se pudo abrir el archivo");
         Index_hash index(new_key.c_str(), pos_data);
-        cout<<"El que voy a meter es: "<<endl;
-        index.index_cout();
+        //cout<<"El que voy a meter es: "<<endl;
+        //index.index_cout();
+        //cout<<"El anterior a es es: "<<endl;
+        //old_index.index_cout();
         old_index=index;
+        //cout<<"nuevo old: "<<endl;
+        //old_index.index_cout();
         file.seekp(pos*sizeof(Index_hash)+(sizeof(int) * 2), ios::beg);
         file.write(reinterpret_cast<char*> (&index), sizeof(Index_hash));
         file.close();
@@ -679,12 +723,12 @@ void extendible_hash::change_index(int pos, string new_key, int pos_data,Index_h
 }
 
 Index_hash extendible_hash::create_index(string key) {
-    cout<<"Indice : "<<key<<endl;
+  //  cout<<"Indice : "<<key<<endl;
     //cantidad de registros
-    cout<<"Bucket enlazado: ";
-    cout<<"size data en key: "<<key<<" - "<<size_data()<<endl;
+   // cout<<"Bucket enlazado: ";
+   // cout<<"size data en key: "<<key<<" - "<<size_data()<<endl;
     int pos_Data=size_data();
-    cout<<pos_Data<<endl;
+   // cout<<pos_Data<<endl;
     Index_hash indice= Index_hash((key.c_str()),pos_Data);//guardar indice ejem 0 con la pos 0 del archivo
 
     hash_table_unorder[key]=make_pair(pos_Data,can_index);
@@ -702,14 +746,14 @@ void extendible_hash::resize(Index_hash& index_old,Bucket &bucket_old, Bucket &n
         string key= pos_key(index_old.key);
         //if(key.length()-1
         if(key==index_new.key){
-            cout<<"01"<<endl;
-            cout<<"key - "<<key<<" inde_new.key "<<index_new.key<<endl;
+           // cout<<"01"<<endl;
+            //cout<<"key - "<<key<<" inde_new.key "<<index_new.key<<endl;
             buc_temp.records[bucket_size]=record;
             bucket_size++;
         }
         else{
-            cout<<"key - "<<key<<" inde_new.key "<<index_new.key<<endl;
-            cout<<"1s1"<<endl;
+           // cout<<"key - "<<key<<" inde_new.key "<<index_new.key<<endl;
+           // cout<<"1s1"<<endl;
             new_bucket.records[new_bucket_size] = record;
             new_bucket_size++;
         }
@@ -728,18 +772,18 @@ void extendible_hash::change_cabezas(Index_hash indice) {
     //cout<<"VAL CAHR "<<valor<<endl;
     //cout<<"ANTES WEBADA: "<<to_string(indice.key)<<endl;
     std::string val(indice.key);
-    cout<<"VAL EN STRING"<<val<<endl;
-    cout<<"ULTIMO "<<val[val.length()-1]<<endl;
+  //  cout<<"VAL EN STRING"<<val<<endl;
+   // cout<<"ULTIMO "<<val[val.length()-1]<<endl;
     //string ultimo =val[val.length()-1];
     //string val = (indice.key[strlen(indice.key)]);
-    cout<<"Indice.key"<<indice.key<<endl;
+  //  cout<<"Indice.key"<<indice.key<<endl;
     ofstream file(this->File_hash_index,std::ios::binary | std::ios::in | std::ios::out);
     std::string val_key = val.substr(val.length() - 1) + "'s";
-    cout<<"val_key :"<<val_key<<"key: "<<table_cabezas[val_key]<<endl;
+   // cout<<"val_key :"<<val_key<<"key: "<<table_cabezas[val_key]<<endl;
     int prueba=table_cabezas[val_key]+1;
-    cout<<"Ahora con : "<<prueba<<endl;
+    //cout<<"Ahora con : "<<prueba<<endl;
     if(val=="0"){
-        cout<<"cabeza_0"<<endl;
+       // cout<<"cabeza_0"<<endl;
         file.seekp(0, ios::beg);
         file.write(reinterpret_cast<char*>(&prueba), sizeof(int));
         table_cabezas[val_key]= prueba;
@@ -747,7 +791,7 @@ void extendible_hash::change_cabezas(Index_hash indice) {
 
     }
     else{
-        cout<<"cabeza_1"<<endl;
+        //cout<<"cabeza_1"<<endl;
 
         file.seekp(sizeof(int), ios::beg);
         file.write(reinterpret_cast<char*>(&prueba), sizeof(int));
@@ -756,7 +800,7 @@ void extendible_hash::change_cabezas(Index_hash indice) {
 
     }
     file.close();
-    cout<<"validar change: "<<table_cabezas[val_key]<<endl;
+   // cout<<"validar change: "<<table_cabezas[val_key]<<endl;
 }
 
 bool extendible_hash::delete_Record(string key_record) {
@@ -771,7 +815,7 @@ bool extendible_hash::delete_Record(string key_record) {
 
     //en caso estar en el primer bucket a donde apunta su indice
     for(int i=0;i<buc.count;i++){
-        cout<<"Delete - i "<<i<<endl;
+        //cout<<"Delete - i "<<i<<endl;
         temp=buc.records[i];
         temp.showData();
         if(temp.Vin==key_record){

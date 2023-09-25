@@ -258,6 +258,25 @@ void insert(long &pos_node, RecordAvl record,fstream &file){
 ### Búsqueda
 
 La búsqueda de registros en el AVL-File se basa en el mismo principio que la búsqueda en un árbol AVL estándar. Se busca el registro deseado siguiendo el criterio de orden de la clave y realizando comparaciones. La ventaja del AVL-File radica en su capacidad para realizar búsquedas eficientes gracias a la estructura balanceada del árbol.
+```cpp
+RecordAvl find(long pos_node, long long key, fstream &file){
+        if(pos_node == -1) throw "Record not found";
+
+		file.seekg(pos_node, ios::beg);
+		RecordAvl record;
+		file.read((char*)&record, sizeof(RecordAvl));
+        if(hash_function(record.Vin) == key){
+            record.showData();
+			return record;
+            }
+		else if(hash_function(record.Vin) > key){
+			return find(record.left, key, file);
+		}
+		else if(hash_function(record.Vin) < key){
+			return find(record.right, key, file);
+		}
+    }
+```
 
 ### Eliminacion
 

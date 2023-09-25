@@ -119,9 +119,9 @@ bool extendible_hash::delete_Record(string key_record) {
 }
 ```
 ## Static Hashing
-<div align="center">
-  <img src="" alt="/img/Static..PNG" style="border-radius: 15px;">
-</div>
+<p align="center">
+  <img src="/img/Static.png">
+</p>
 
 Static Hashing es una técnica de organización de datos que utiliza un esquema fijo de división de registros en buckets predefinidos.
 
@@ -288,11 +288,11 @@ RecordAvl find(long pos_node, long long key, fstream &file){
 La eliminación de registros en el AVL-File se realiza también siguiendo el principio de un árbol AVL. Se busca el registro a eliminar, se realiza la eliminación y se restaura el equilibrio del árbol mediante rotaciones si es necesario.
 
 ## Sequential File
-Se trata de un método simple utilizado para el almacenamiento, organización y gestión de datos mediante dos archivos primarios conectados con variables de apunte. Los datos se almacenan en forma secuencial en formato binario, de tal forma que, el registro de datos siempre será continuo y ordenado de menor a mayor según lo programado. 
-
 <p align="center">
   <img src="/img/seq_main.jpeg">
 </p>
+Se trata de un método simple utilizado para el almacenamiento, organización y gestión de datos mediante dos archivos primarios conectados con variables de apunte. Los datos se almacenan en forma secuencial en formato binario, de tal forma que, el registro de datos siempre será continuo y ordenado de menor a mayor según lo programado. 
+
 
 ### Inserción
 La inserción para el sequential file y sus dos archivos presenta múltiples casos que deben ser analizados con anterioridad. Se recibe un registro el cual deberá posicionarse donde corresponda según su valor Key. En caso este valor sea menor que los valores ya insertados en el archivo principal, deberá utilizarse un archivo auxiliar con tamaño limitado, esto sin perder el registro anterior y el siguiente al insertado. Cuando el tamaño del archivo auxiliar exceda, se realizará una actualización en el achivo principal con todos los registros ya ordenados secuencialmente.

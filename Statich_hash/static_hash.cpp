@@ -16,10 +16,11 @@ static_hash::static_hash( string dataFile, int m)  {
 
 }
 int static_hash::size_data() {
-   // cout<<"size_data"<<endl;
+    // cout<<"size_data"<<endl;
 
     fstream fileData(this->data_file, ios::app | ios::binary);
     fileData.seekg(0, ios::end);
+    this->llamadas_mem_secundaria=llamadas_mem_secundaria+1;
     return fileData.tellg();
 }
 void static_hash::initialize_hash_structure(int M) {
@@ -29,6 +30,8 @@ void static_hash::initialize_hash_structure(int M) {
     Bucket bucket=Bucket(fb);
     for(int i=0;i<M;i++){
         file.write(reinterpret_cast<char*>(&bucket), bucket.sizeofBucket());//sobreescribir bucket
+
+        this->llamadas_mem_secundaria=llamadas_mem_secundaria+1;
     }
 
     file.close();
@@ -55,7 +58,7 @@ void static_hash::insert_record(Record record) {
         };
     }
     else{
-        cout<<"Car registrado"<<endl;
+        cout<<"Car registrado, no se agrega"<<endl;
     }
 
 }
@@ -68,6 +71,8 @@ Bucket static_hash::read_bucket(int pos) {
     file.seekg(pos*pepelen.sizeofBucket(), ios::beg);//fixed length record
     file.read(reinterpret_cast<char*>(&pepelen), pepelen.sizeofBucket());
     file.close();
+
+    this->llamadas_mem_secundaria=llamadas_mem_secundaria+1;
     return pepelen;
 }
 
@@ -81,6 +86,7 @@ void static_hash::write_bucket(Bucket &bucket, int pos) {
     ofstream file(this->data_file,  std::ios::binary | std::ios::in | std::ios::out);//abrir en binario y al cambiar algo no elimina lo demas
     if(!file.is_open()) throw ("El archivo no existe");//no hago nada
 
+    this->llamadas_mem_secundaria=llamadas_mem_secundaria+1;
     file.seekp(pos*bucket.sizeofBucket());//mover puntero al inicio
     file.write(reinterpret_cast<char*>(&bucket), bucket.sizeofBucket());//sobreescribir bucket
     file.close();
@@ -133,6 +139,8 @@ Bucket static_hash::read_bucket_pos(int pos) {
     if(!file.is_open()) throw ("No se pudo abrir el archivo");
     Bucket pepelen(fb);
     file.seekg(pos, ios::beg);//fixed length record
+
+    this->llamadas_mem_secundaria=llamadas_mem_secundaria+1;
     file.read(reinterpret_cast<char*>(&pepelen), pepelen.sizeofBucket());
     //cout<<"mostrar bucket leido: "<<endl;
     //pepelen.allcout();
@@ -167,6 +175,7 @@ void static_hash::write_in_pos(Bucket bucket, int pos) {
     ofstream file(this->data_file,  std::ios::binary | std::ios::in | std::ios::out);//abrir en binario y al cambiar algo no elimina lo demas
     if(!file.is_open()) throw ("El archivo no existe");//no hago nada
 
+    this->llamadas_mem_secundaria=llamadas_mem_secundaria+1;
     file.seekp(pos);//mover puntero al inicio
     file.write(reinterpret_cast<char*>(&bucket), bucket.sizeofBucket());//sobreescribir bucket
     file.close();
@@ -224,7 +233,7 @@ bool static_hash::delete_Record(string key_record) {
 
 void static_hash::read_Buckets() {
     ifstream file(this->data_file, ios::binary);
-   // cout<<"Cantidad de registros-read: "<<endl;
+    // cout<<"Cantidad de registros-read: "<<endl;
     Bucket buc(fb);
     int pos_Data=size_data()/buc.sizeofBucket();
     //cout<<pos_Data<<endl;
@@ -232,6 +241,7 @@ void static_hash::read_Buckets() {
     int contador=0;
     for(int i=0;i<pos_Data;i++){
 
+        this->llamadas_mem_secundaria=llamadas_mem_secundaria+1;
         file.seekg(i*buc.sizeofBucket(), ios::beg);//fixed length record
         file.read(reinterpret_cast<char*>(&buc), buc.sizeofBucket());
         buc.allcout();

@@ -148,6 +148,11 @@ void static_hash::insert_record(Record record) {
 
 }
 ```
+### Tiempo de insertar los registros
+<p align="center">
+  <img src="/">
+</p>
+
 ### Búsqueda
 
 La búsqueda implica localizar el bucket asociado a una clave mediante la función de hash y buscar el registro dentro de ese bucket. En caso no estar ahi validar el anexado a este.
@@ -256,6 +261,8 @@ void insert(long &pos_node, RecordAvl record,fstream &file){
         balance(pos_node, file); ser feliz
     }
 ```
+### Tiempo de insertar los registros
+
 <p align="center">
   <img src="/img/time_avl.jpg">
 </p>

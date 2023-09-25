@@ -165,5 +165,18 @@ La inserción para el sequential file y sus dos archivos presenta múltiples cas
 ### Búsqueda
 La función de busqueda nos permite encontrar si es que existe algún registro que coincidan con el valor dado o este no se encuentra en la data actual. 
 
+```cpp
+Sequential_Record search (string key) {
+    // Buscar pos
+    // Abrir archivo principal
+        // Leer en posición
+        // Varificar registro eliminado o no existe
+
+        // Abrir archivo secundario
+            // Recorrer todos los next en archivo "a"
+            // Si el key coincide, retorna
+}
+```
+
 ### Eliminación
 Este método nos permite eliminar un registro de forma representativa ya que realmente se hace un cambio de estado. Esto permite saltar el registro ya que ya no habría ningun registro que apunte al eliminado como siguiente. 

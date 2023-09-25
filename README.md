@@ -343,7 +343,8 @@ Este método nos permite eliminar un registro de forma representativa ya que rea
 </p>
 
 
-#Parser
+# Parser
+
 El mini parser funciona para las consulas dadas por el profesor. Esta habilitado para las siguientes consultas.
 ```cpp
     string sqlStatement2 = "delete from "ESTRUCTURA" where VIN = "VALOR";// ac

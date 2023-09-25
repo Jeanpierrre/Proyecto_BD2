@@ -15,7 +15,7 @@ unsigned long long hash_function(const std::string& key) {
 
     return key_as_long;
 }
-struct Record
+struct RecordAvl
 {
     int id;//
     int Price;//
@@ -60,13 +60,13 @@ public:
         }
     }
     
-    Record find(long long key){
+    RecordAvl find(long long key){
         fstream file(filename,ios::binary | ios::app | ios::in | ios::out);
-        Record record = find(pos_root, key, file);
+        RecordAvl record = find(pos_root, key, file);
         file.close();
         return record;
     }
-    void insert(Record record){
+    void insert(RecordAvl record){
         fstream file(filename, ios::binary | ios::app | ios::in | ios::out);
         //if(!file.is_open()) throw ("No se pudo abrir el archivo");
         
@@ -75,20 +75,20 @@ public:
         file.close();
     }
 
-    vector<Record> Range_search(long long key_begin, long long key_end){
+    vector<RecordAvl> Range_search(long long key_begin, long long key_end){
         fstream file(filename, ios::binary | ios::app | ios::in | ios::out);
-        vector<Record> result;
+        vector<RecordAvl> result;
         Range_search(pos_root, key_begin, key_end,result,file);
         file.close();
         return result;
     }
 
-    vector<Record> inorder(){
+    vector<RecordAvl> inorder(){
         //cout<<"entra"<<endl;
         fstream file(filename, ios::binary | ios::app | ios::in | ios::out);
         string line;
         getline(file, line);
-        vector<Record> result;
+        vector<RecordAvl> result;
         inorder(pos_root, result,file);
         //cout<<"SALE"<<endl;
         file.close();
@@ -103,19 +103,19 @@ public:
     }
     
 private:
-    void write_file(long pos_node,Record record){
+    void write_file(long pos_node,RecordAvl record){
         ofstream file_W(filename, std::ios::binary |  std::ios::in | std::ios::out);//abrir en binario y al cambiar algo no elimina lo demas
         if(!file_W.is_open()) throw ("Error al abrir");//no hago nada     
         file_W.seekp(pos_node);//mover puntero al inicio
-        file_W.write(reinterpret_cast<char*>(&record), sizeof(Record));//sobreescribir cabeza anterior
+        file_W.write(reinterpret_cast<char*>(&record), sizeof(RecordAvl));//sobreescribir cabeza anterior
         file_W.close();
     }
-    Record find(long pos_node, long long key, fstream &file){
+    RecordAvl find(long pos_node, long long key, fstream &file){
         if(pos_node == -1) throw "Record not found";
 
 		file.seekg(pos_node, ios::beg);
-		Record record;
-		file.read((char*)&record, sizeof(Record));
+		RecordAvl record;
+		file.read((char*)&record, sizeof(RecordAvl));
         //record.showData();
         if(hash_function(record.Vin) == key){
             record.showData();
@@ -132,7 +132,7 @@ private:
     
 
     
-    void insert(long &pos_node, Record record,fstream &file){
+    void insert(long &pos_node, RecordAvl record,fstream &file){
 
         if(pos_node==-1){
             file.seekg(0,ios::end);//posiciona el puntero al final
@@ -146,8 +146,8 @@ private:
         else{
             file.seekg(pos_node,ios::beg);
 
-            Record parent;
-            file.read((char*) &parent,sizeof(Record));
+            RecordAvl parent;
+            file.read((char*) &parent,sizeof(RecordAvl));
 
             if(hash_function(record.Vin)<hash_function(parent.Vin)){
                 //long new_pos = parent.left;
@@ -174,16 +174,16 @@ private:
     int height(long pos_node, fstream &file){
         if(pos_node == -1) return -1;
         file.seekg(pos_node, ios::beg);
-        Record record;
-        file.read((char*)&record, sizeof(Record));
+        RecordAvl record;
+        file.read((char*)&record, sizeof(RecordAvl));
         return record.height;
     }
 
     int balancingfactor(long pos_node, fstream &file){
         if(pos_node == -1) return 0;
         file.seekg(pos_node, ios::beg);
-        Record record;
-        file.read((char*)&record, sizeof(Record));
+        RecordAvl record;
+        file.read((char*)&record, sizeof(RecordAvl));
         return height(record.left, file) - height(record.right, file);
     }
 
@@ -191,8 +191,8 @@ private:
         if (pos_node == -1) return;
         
         file.seekg(pos_node, ios::beg);
-        Record record;
-        file.read((char*)&record, sizeof(Record));
+        RecordAvl record;
+        file.read((char*)&record, sizeof(RecordAvl));
         
         // Actualizar altura del nodo actual
         record.height = 1 + max(height(record.left, file), height(record.right, file));
@@ -203,8 +203,8 @@ private:
 
     void balance(long &pos_node, fstream &file){
         file.seekg(pos_node, ios::beg);
-        Record record;
-        file.read((char*)&record, sizeof(Record));
+        RecordAvl record;
+        file.read((char*)&record, sizeof(RecordAvl));
         int hb = balancingfactor(pos_node, file);
         if(hb > 1 && balancingfactor(record.left, file) >= 0){
             right_rota(pos_node, file);
@@ -229,13 +229,13 @@ private:
 
     void left_rota(long &pos_node, fstream &file){
         file.seekg(pos_node, ios::beg);
-        Record record;
-        file.read((char*)&record, sizeof(Record));
+        RecordAvl record;
+        file.read((char*)&record, sizeof(RecordAvl));
 
         long new_root = record.right;
         file.seekg(new_root, ios::beg);
-        Record new_root_record;
-        file.read((char*)&new_root_record, sizeof(Record));
+        RecordAvl new_root_record;
+        file.read((char*)&new_root_record, sizeof(RecordAvl));
 
         record.right = new_root_record.left;
         new_root_record.left = pos_node;
@@ -253,13 +253,13 @@ private:
 
     void right_rota(long &pos_node, fstream &file){
         file.seekg(pos_node, ios::beg);
-        Record record;
-        file.read((char*)&record, sizeof(Record));
+        RecordAvl record;
+        file.read((char*)&record, sizeof(RecordAvl));
 
         long new_root = record.left;
         file.seekg(new_root, ios::beg);
-        Record new_root_record;
-        file.read((char*)&new_root_record, sizeof(Record));
+        RecordAvl new_root_record;
+        file.read((char*)&new_root_record, sizeof(RecordAvl));
 
         record.left = new_root_record.right;
         new_root_record.right = pos_node;
@@ -274,11 +274,11 @@ private:
         pos_node = new_root;
     }
 
-    vector<Record> inorder(long &pos_node, vector<Record> &result, fstream &file){
+    vector<RecordAvl> inorder(long &pos_node, vector<RecordAvl> &result, fstream &file){
         if(pos_node != -1){
-            Record record;
+            RecordAvl record;
             file.seekg(pos_node, ios::beg);
-            file.read(reinterpret_cast<char*>(&record), sizeof(Record));
+            file.read(reinterpret_cast<char*>(&record), sizeof(RecordAvl));
 
             inorder(record.left, result, file);
             result.push_back(record);
@@ -286,11 +286,11 @@ private:
         }
         return result;
     }
-    vector<Record> Range_search(long pos_node, long long key_begin, long long key_end, vector<Record> &result,fstream &file){
+    vector<RecordAvl> Range_search(long pos_node, long long key_begin, long long key_end, vector<RecordAvl> &result,fstream &file){
         if(pos_node != -1){
-            Record record;
+            RecordAvl record;
             file.seekg(pos_node, ios::beg);
-            file.read(reinterpret_cast<char*>(&record), sizeof(Record));
+            file.read(reinterpret_cast<char*>(&record), sizeof(RecordAvl));
 
             Range_search(record.left, key_begin, key_end, result, file);
             if(hash_function(record.Vin) >= key_begin && hash_function(record.Vin) <= key_end){
@@ -306,7 +306,7 @@ private:
 void writeFile(string filename){
     try {
         AVLFile fileavl("filenameavl.bin");
-        Record record;
+        RecordAvl record;
         //vector<Record> records;
         ifstream file(filename);
 
@@ -320,7 +320,7 @@ void writeFile(string filename){
         getline(file, line);
         while (getline(file, line)){
             istringstream iss(line);
-            Record registro;
+            RecordAvl registro;
 
             string id_str, Price_str, Year_str;
             string Mileage_str, city_str, State_str, Vin_str, Make_str, model_str;
@@ -363,8 +363,8 @@ void readFile(string filename){
     try{
     AVLFile file(filename);
     cout<<"--------- show all sorted data -----------\n";
-    vector<Record> result = file.inorder();
-    for(Record re : result){
+    vector<RecordAvl> result = file.inorder();
+    for(RecordAvl re : result){
         re.showData();
     }
     }
@@ -382,7 +382,7 @@ void Buscar_alumno_codigo(string filename){
     
     AVLFile file(filename);
     //Record record;
-    Record alumno= file.find(key_hash);
+    RecordAvl alumno= file.find(key_hash);
     alumno.showData();
     cout<<endl;
     cout<<"Fin de la busqueda"<<endl;
@@ -400,8 +400,8 @@ void busqueda_rango(string filename){
     long long key_begin_hash = hash_function(key_begin);
     long long key_end_hash = hash_function(key_end);
     AVLFile file(filename);
-    vector<Record> result = file.Range_search(key_begin_hash, key_end_hash);
-    for(Record re : result){
+    vector<RecordAvl> result = file.Range_search(key_begin_hash, key_end_hash);
+    for(RecordAvl re : result){
         re.showData();
     }
     cout<<endl;

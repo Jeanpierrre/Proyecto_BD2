@@ -17,21 +17,18 @@ unsigned long long hash_function(const std::string& key) {
 }
 struct Record
 {
-    int id;
-    int Price;
-    int Year;
-    char Mileage[20];
-    char city[20];
-    char State[20];
-    char Vin[18];
-    char Make[50];
-    char model[50];
+    int id;//
+    int Price;//
+    int Year;//
+    char State[20];//
+    char Vin[18];//
+    char Make[50];//
 
     long left=-1, right=-1;
     int height=-1;
 
     void showData() {
-        cout<<id<<" "<<Price<<" "<<Year<<" "<<Mileage<<" "<<city<<" "<<State<<" "<<Vin<<" "<<Make<<" "<<model<<" i: "<<left<<" d: "<<right<<" height: "<<height<<endl;
+        cout<<id<<" "<<Price<<" "<<Year<<" "<<" "<<State<<" "<<Vin<<" "<<Make<<" "<<" i: "<<left<<" d: "<<right<<" height: "<<height<<endl;
     }
     
 };
@@ -41,6 +38,8 @@ class AVLFile
 private:
     string filename;
     long pos_root;
+    /*ifstream readFile;
+    ofstream writeFile;*/
 public:
     bool fileExists(const std::string &fileName) {
         std::ifstream file(fileName);
@@ -48,6 +47,8 @@ public:
     }
     AVLFile(string filename){
         this->filename = filename;
+        /*this->writeFile.open(filename, std::ios::binary |  std::ios::in | std::ios::out);//abrir en binario y al cambiar algo no elimina lo demas
+        this->readFile.open(filename, std::ios::binary |  std::ios::in | std::ios::out);//abrir en binario y al cambiar algo no elimina lo demas*/
         if(!fileExists(filename)){
             cout<<"Archivo creado"<<endl;
             this->pos_root = -1;
@@ -59,10 +60,8 @@ public:
         }
     }
     
-    Record find(int key){
+    Record find(long long key){
         fstream file(filename,ios::binary | ios::app | ios::in | ios::out);
-        string line;
-        getline(file, line);
         Record record = find(pos_root, key, file);
         file.close();
         return record;
@@ -74,6 +73,14 @@ public:
     
         insert(pos_root, record, file);
         file.close();
+    }
+
+    vector<Record> Range_search(long long key_begin, long long key_end){
+        fstream file(filename, ios::binary | ios::app | ios::in | ios::out);
+        vector<Record> result;
+        Range_search(pos_root, key_begin, key_end,result,file);
+        file.close();
+        return result;
     }
 
     vector<Record> inorder(){
@@ -96,7 +103,14 @@ public:
     }
     
 private:
-    Record find(long pos_node, int key, fstream &file){
+    void write_file(long pos_node,Record record){
+        ofstream file_W(filename, std::ios::binary |  std::ios::in | std::ios::out);//abrir en binario y al cambiar algo no elimina lo demas
+        if(!file_W.is_open()) throw ("Error al abrir");//no hago nada     
+        file_W.seekp(pos_node);//mover puntero al inicio
+        file_W.write(reinterpret_cast<char*>(&record), sizeof(Record));//sobreescribir cabeza anterior
+        file_W.close();
+    }
+    Record find(long pos_node, long long key, fstream &file){
         if(pos_node == -1) throw "Record not found";
 
 		file.seekg(pos_node, ios::beg);
@@ -104,7 +118,9 @@ private:
 		file.read((char*)&record, sizeof(Record));
         //record.showData();
         if(hash_function(record.Vin) == key){
-			return record;}
+            record.showData();
+			return record;
+            }
 		else if(hash_function(record.Vin) > key){
 			return find(record.left, key, file);
 		}
@@ -112,8 +128,12 @@ private:
 			return find(record.right, key, file);
 		}
     }
+
+    
+
+    
     void insert(long &pos_node, Record record,fstream &file){
-        // cout<<"POS NODEEEE"<<pos_node<<endl;
+
         if(pos_node==-1){
             file.seekg(0,ios::end);//posiciona el puntero al final
             pos_node=file.tellg();//dice todo el tamaño del archivo
@@ -144,15 +164,9 @@ private:
             else{
                 throw "Record already exists";
             }
-            ofstream file_W(filename, std::ios::binary |  std::ios::in | std::ios::out);//abrir en binario y al cambiar algo no elimina lo demas
-            if(!file_W.is_open()) throw ("Error al abrir");//no hago nada 
-            parent.height = 1 + max(height(parent.left, file), height(parent.right, file));
-            
-            file_W.seekp(pos_node);//mover puntero al inicio
-            file_W.write(reinterpret_cast<char*>(&parent), sizeof(Record));//sobreescribir cabeza anterior
-            //updateheight(pos_node, file);
-            file_W.close();
-            balance(pos_node, file);
+            write_file(pos_node, parent);
+            updateheight(pos_node, file);
+            //balance(pos_node, file);
 
         }
     }
@@ -183,11 +197,7 @@ private:
         // Actualizar altura del nodo actual
         record.height = 1 + max(height(record.left, file), height(record.right, file));
 
-        ofstream file_W(filename, ios::binary | ios::in | ios::out);
-        if (!file_W.is_open()) throw ("Error al abrir");
-        file_W.seekp(pos_node);
-        file_W.write(reinterpret_cast<char*>(&record), sizeof(Record));
-        file_W.close();
+        write_file(pos_node, record);
 
 }
 
@@ -196,16 +206,25 @@ private:
         Record record;
         file.read((char*)&record, sizeof(Record));
         int hb = balancingfactor(pos_node, file);
-        if(hb >= 2){
-            if(balancingfactor(record.left, file) < 0)
-                left_rota(record.left, file);
+        if(hb > 1 && balancingfactor(record.left, file) >= 0){
             right_rota(pos_node, file);
         }
-        else if(hb <= -2){
-            if(balancingfactor(record.right, file) > 0)
-                right_rota(record.right, file);
+        else if(hb > 1 && balancingfactor(record.left, file) < 0){
+            left_rota(record.left, file);
+            right_rota(pos_node, file);
+        }
+        else if(hb < -1 && balancingfactor(record.right, file) <= 0){
             left_rota(pos_node, file);
         }
+        else if(hb < -1 && balancingfactor(record.right, file) > 0){
+            right_rota(record.right, file);
+            left_rota(pos_node, file);
+        }
+        //actualizamos la altura del nodo y sus hijos
+        updateheight(pos_node, file);
+        updateheight(record.left, file);
+        updateheight(record.right, file);
+
     }
 
     void left_rota(long &pos_node, fstream &file){
@@ -225,11 +244,9 @@ private:
         new_root_record.height = 1 + max(height(new_root_record.left, file), height(new_root_record.right, file));
 
 
-        file.seekp(pos_node, ios::beg);
-        file.write(reinterpret_cast<char*>(&record), sizeof(Record));
+        write_file(pos_node, record);
 
-        file.seekp(new_root, ios::beg);
-        file.write(reinterpret_cast<char*>(&new_root_record), sizeof(Record));
+        write_file(new_root, new_root_record);
 
         pos_node = new_root;
     }
@@ -250,8 +267,9 @@ private:
         record.height = 1 + max(height(record.left, file), height(record.right, file));
         new_root_record.height = 1 + max(height(new_root_record.left, file), height(new_root_record.right, file));
 
-        file.seekp(pos_node, ios::beg);
-        file.write(reinterpret_cast<char*>(&record), sizeof(Record));
+        write_file(pos_node, record);
+
+        write_file(new_root, new_root_record);
 
         pos_node = new_root;
     }
@@ -265,6 +283,21 @@ private:
             inorder(record.left, result, file);
             result.push_back(record);
             inorder(record.right, result, file);
+        }
+        return result;
+    }
+    vector<Record> Range_search(long pos_node, long long key_begin, long long key_end, vector<Record> &result,fstream &file){
+        if(pos_node != -1){
+            Record record;
+            file.seekg(pos_node, ios::beg);
+            file.read(reinterpret_cast<char*>(&record), sizeof(Record));
+
+            Range_search(record.left, key_begin, key_end, result, file);
+            if(hash_function(record.Vin) >= key_begin && hash_function(record.Vin) <= key_end){
+                result.push_back(record);
+                cout<<record.Vin<<endl;
+            }
+            Range_search(record.right, key_begin, key_end, result, file);
         }
         return result;
     }
@@ -308,12 +341,11 @@ void writeFile(string filename){
             registro.Year = stoi(Year_str);
 
             // Copia los valores de las cadenas a los campos de caracteres de longitud fija
-            strncpy(registro.Mileage, Mileage_str.c_str(), sizeof(registro.Mileage));
-            strncpy(registro.city, city_str.c_str(), sizeof(registro.city));
+            
             strncpy(registro.State, State_str.c_str(), sizeof(registro.State));
             strncpy(registro.Vin, Vin_str.c_str(), sizeof(registro.Vin));
             strncpy(registro.Make, Make_str.c_str(), sizeof(registro.Make));
-            strncpy(registro.model, model_str.c_str(), sizeof(registro.model));
+            
 
             fileavl.insert(registro);
 
@@ -343,28 +375,35 @@ void readFile(string filename){
 
 void Buscar_alumno_codigo(string filename){
     cout<<"---------------Buscar---------------"<<endl;
-    cout<<"Escribe el codigo del alumno que deseas buscar"<<endl;
-    int pos; cin>>pos;
-    try{
-        AVLFile file(filename);
-        //Record record;
-        Record alumno= file.find(pos);
-        alumno.showData();
-        cout<<endl;
-        cout<<"Fin de la busqueda"<<endl;
-    }
-    catch (const char* e) {
-        cout << "Exception: " << e << endl;
-    }
+    cout<<"Escribe el VIM del carro que deseas buscar"<<endl;
+    string key; 
+    cin>>key;
+    long long key_hash = hash_function(key);
+    
+    AVLFile file(filename);
+    //Record record;
+    Record alumno= file.find(key_hash);
+    alumno.showData();
+    cout<<endl;
+    cout<<"Fin de la busqueda"<<endl;
+    
 }
-int main() {
-    //AVLFile file("texto.txt");
-    //file.load();
-    /*for(Record re : result){
+
+void busqueda_rango(string filename){
+    cout<<"---------------Rango---------------"<<endl;
+    cout<<"Escribe el VIM inicial del carro que deseas buscar"<<endl;
+    string key_begin;
+    cin>>key_begin;
+    cout<<"Escribe el VIM final del carro que deseas buscar"<<endl;
+    string key_end;
+    cin>>key_end;
+    long long key_begin_hash = hash_function(key_begin);
+    long long key_end_hash = hash_function(key_end);
+    AVLFile file(filename);
+    vector<Record> result = file.Range_search(key_begin_hash, key_end_hash);
+    for(Record re : result){
         re.showData();
-    }*/
-    writeFile("texto.txt");
-    readFile("filenameavl.bin");
-    //Buscar_alumno_codigo("filenameavl.bin");
-    return 0;
+    }
+    cout<<endl;
+    cout<<"Fin de la busqueda"<<endl;
 }

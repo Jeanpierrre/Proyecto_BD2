@@ -21,7 +21,7 @@ Funcionamiento adecuado de las estructuras de manejo de archivos y sus métodos 
 
 ## Extendible hashing 
 <div align="center">
-  <img src="https://cdn.educba.com/academy/wp-content/uploads/2021/07/AVL-Tree-Rotation-1-1.jpg" alt="Extendible Hash" style="border-radius: 15px;">
+  <img src="https://media.geeksforgeeks.org/wp-content/uploads/20190803103835/hash11.png" alt="Extendible Hash" style="border-radius: 15px;">
 </div>
 El extendible hash es una estructura de almacenamiento dinámico. Consta de 3 elementos importantes, registros, buckets y el hash table. Los registros son un conjunto de información relacionada los cuales se encuentran en un inicio en el archivo dataset y posteriormente en buckets, estructuras de almacenamiento de registros. Así mismo, el hash_table es un conjunto de asociaciones key-value en donde el key es la llave a través del cual se puede llegar al value, siendo este el valor en memoria que referencia a dicho bucket, valor en específico.  La estructura extendible hash emula el funcionamiento de una base de datos, la organización, accesibilidad y perdurabilidad de los datos. Los archivos index.bin y data.bin me permiten manejar la perdurabilidad de los registros. Dentro de index.bin se almacenan las asociaciones key-value del hash_table mientras que en data.bin buckets de registros.
 
@@ -123,16 +123,95 @@ Static Hashing es una técnica de organización de datos que utiliza un esquema 
 ### Inserción
 
 La inserción implica asignar un registro a un bucket específico según su clave, utilizando una función de hash. Si el bucket está lleno, se pueden tomar medidas como reorganizar la estructura o implementar técnicas de resolución de colisiones.
+```cpp
+void static_hash::insert_record(Record record) {
 
+    if(!search_record(record.Vin)){
+        int number_key= Vin_to_number(record.Vin);//convertir a entero
+        int key_record=(BinKeyMod(number_key));//funcion hash
+        Bucket buc= read_bucket(key_record);
+        if(buc.count<fb){
+            add_Record(key_record,buc,record);
+        }
+        else{
+            overflow(key_record,buc,record);
+        };
+    }
+    else{
+        cout<<"Car registrado, no se agrega"<<endl;
+    }
+
+}
+```
 ### Búsqueda
 
 La búsqueda implica localizar el bucket asociado a una clave mediante la función de hash y buscar el registro dentro de ese bucket. En caso no estar ahi validar el anexado a este.
-
+```cpp
+bool static_hash::search_record(string vin_key) {
+    Record record;
+    int number_key= Vin_to_number(vin_key);
+    int key_pos =(BinKeyMod(number_key));
+    Bucket bucket= read_bucket(key_pos);
+    for (int i = 0; i < bucket.count; i++){
+        record = bucket.records[i];
+        if (record.Vin == vin_key){
+            record.showData();
+            return true;
+        }
+    }
+    //CASO CUANDO ESTA ENLAZADO A OTRO BUCKET
+    while(bucket.nextBucket!=-1){
+        bucket = read_bucket_pos(bucket.nextBucket);
+        for (int i = 0; i < bucket.count; i++){
+            record = bucket.records[i];
+            if (record.Vin == vin_key){
+                record.showData();
+                return true;}
+                }
+    }
+    return false;
+}
+```
 ### Eliminación
 
 La eliminación consiste en encontrar el registro deseado en su bucket correspondiente y eliminarlo, actualizando si es necesario la organización del bucket.
 
 Este enfoque está diseñado para manejar una cantidad fija de datos y no se ajusta de forma dinámica como en otros métodos como Extendible Hashing.
+```cpp
+bool static_hash::delete_Record(string key_record) {
+    int number_key = Vin_to_number(key_record); 
+    int key_pos = BinKeyMod(number_key); 
+    Bucket buc = read_bucket(key_pos); 
+    for (int i = 0; i < buc.count; i++) {
+        if (buc.records[i].Vin == key_record) {
+            // Se encontró el registro, proceder a eliminarlo
+            for (int j = i + 1; j < buc.count; j++) {
+                buc.records[j - 1] = buc.records[j];
+            }
+            buc.count--;
+            // Actualizar el bucket en el archivo
+            write_bucket(buc, key_pos);
+            return true; // Registro eliminado con éxito
+        }
+    }
+    while (buc.nextBucket != -1) {
+        int next_bucket_pos = buc.nextBucket;
+        buc = read_bucket_pos(next_bucket_pos);
+
+        for (int i = 0; i < buc.count; i++) {
+            if (buc.records[i].Vin == key_record) {
+                for (int j = i + 1; j < buc.count; j++) {
+                    buc.records[j - 1] = buc.records[j];
+                }
+                buc.count--;
+                write_in_pos(buc, next_bucket_pos);
+                return true; // Registro eliminado con éxito}
+        }
+    }
+    return false;
+}
+
+```
 
 ## Avl File
 <div align="center">

@@ -21,8 +21,8 @@ Funcionamiento adecuado de las estructuras de manejo de archivos y sus métodos 
 
 ## Extendible hashing 
 
-<div style="border: 1px solid #000; padding: 10px;">
-  <img src="https://media.geeksforgeeks.org/wp-content/uploads/20190803103835/hash11.png" alt="Texto alternativo">
+<div align="center">
+  <img src="https://media.geeksforgeeks.org/wp-content/uploads/20190803103835/hash11.png" alt="Extendible Hash" style="border-radius: 15px;">
 </div>
 
 El extendible hash es una estructura de almacenamiento dinámico. Consta de 3 elementos importantes, registros, buckets y el hash table. Los registros son un conjunto de información relacionada los cuales se encuentran en un inicio en el archivo dataset y posteriormente en buckets, estructuras de almacenamiento de registros. Así mismo, el hash_table es un conjunto de asociaciones key-value en donde el key es la llave a través del cual se puede llegar al value, siendo este el valor en memoria que referencia a dicho bucket, valor en específico.  La estructura extendible hash emula el funcionamiento de una base de datos, la organización, accesibilidad y perdurabilidad de los datos. Los archivos index.bin y data.bin me permiten manejar la perdurabilidad de los registros. Dentro de index.bin se almacenan las asociaciones key-value del hash_table mientras que en data.bin buckets de registros.
@@ -119,6 +119,9 @@ bool extendible_hash::delete_Record(string key_record) {
 }
 ```
 ## Static Hashing
+<div align="center">
+  <img src="" alt="/img/Static..PNG" style="border-radius: 15px;">
+</div>
 
 Static Hashing es una técnica de organización de datos que utiliza un esquema fijo de división de registros en buckets predefinidos.
 

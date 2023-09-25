@@ -75,7 +75,7 @@ Este enfoque está diseñado para manejar una cantidad fija de datos y no se aju
 
 ## Avl File
 <div align="center">
-  <img src="https://students.cs.byu.edu/~cs235ta/labs/images/avl.png" alt="Avl FILE" style="border-radius: 15px;">
+  <img src="https://cdn.educba.com/academy/wp-content/uploads/2021/07/AVL-Tree-Rotation-1-1.jpg" alt="Avl FILE" style="border-radius: 15px;">
 </div>
 El AVL-File es una estructura de datos basada en árboles AVL que se utiliza para almacenar y gestionar registros. Esta estructura combina las propiedades de los árboles AVL (árboles binarios de búsqueda balanceados) con archivos binarios para lograr una organización eficiente de los registros y operaciones de búsqueda, inserción y eliminación.
 

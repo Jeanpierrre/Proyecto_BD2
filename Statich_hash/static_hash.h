@@ -12,7 +12,7 @@ using namespace std;
 #include <unordered_map>
 class static_hash {
 private:
-    string data_file;
+
     int M;
     void initialize_hash_structure(int M);
     int size_data();
@@ -21,6 +21,9 @@ private:
     void write_bucket(Bucket &bucket, int pos);
 
 public:
+    int llamadas_mem_secundaria=0;
+    string data_file;
+
     Bucket read_bucket(int pos);
     static_hash(string dataFile, int m);
     void insert_record(Record record);

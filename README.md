@@ -54,6 +54,43 @@ Primero se busca el bucket asociado a través de la clave (key) en el bucket pri
 ### Eliminación
 
 La eliminación de registros implica ubicar el registro deseado en el bucket correspondiente y reemplazarlo por el último registro del mismo, actualizando el tamaño del bucket.
+```cpp
+bool extendible_hash::delete_Record(string key_record) {
+    int number_key= Vin_to_number(key_record);//convertir string a numero
+    string key_record_Convert=(BinKeyMod(number_key));//convertir numero a binario con D bits caracteristicos
+    string vin= pos_key(key_record_Convert);//Busca en el unordered map la referencia al indice en el archivo
+    Index_hash in=Index_hash(vin.c_str(),hash_table_unorder[vin].first);//con esto armo el indice
+    Bucket buc= read_bucket(in.pos_Data);
+    Record temp;
+    for(int i=0;i<buc.count;i++){
+        temp=buc.records[i];
+        temp.showData();
+        if(temp.Vin==key_record){
+            for (int j = i + 1; j < buc.count; j++){
+                buc.records[j - 1] = buc.records[j];
+            }
+            buc.count--;
+            write_bucket(buc,in.pos_Data);
+            return true;
+        }
+    }
+    while(buc.nextBucket!=1){
+        int pos_data_temp=buc.nextBucket;
+        buc= read_bucket(pos_data_temp);
+        for(int i=0;i<buc.count;i++){
+            temp=buc.records[i];
+            if(temp.Vin==key_record){
+                for (int j = i + 1; j < buc.count; j++){
+                    buc.records[j - 1] = buc.records[j];
+                }
+                buc.count--;
+                write_bucket(buc,pos_data_temp);
+                return true;
+            }
+        }
+    }
+    return false;
+}
 
 ## Static Hashing
 

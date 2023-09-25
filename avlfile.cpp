@@ -143,9 +143,14 @@ private:
 		}
     }
 
-    
+    RecordAvl getRecord(long pos_node, fstream &file){
+        if(pos_node == -1) throw "Record not found";
+        file.seekg(pos_node, ios::beg);
+        RecordAvl record;
+        file.read((char*)&record, sizeof(RecordAvl));
+        return record;
+    }
 
-    
     void insert(long &pos_node, RecordAvl record,fstream &file){
 
         if(pos_node==-1){
@@ -155,7 +160,8 @@ private:
             file.write((char*)&record,sizeof(record));
             /*balance(pos_node, file);*/
             updateheight(pos_node, file);
-            balance(pos_node, file);
+            
+            
         }
         else{
             file.seekg(pos_node,ios::beg);
@@ -180,9 +186,11 @@ private:
             }
             write_file(pos_node, parent);
             updateheight(pos_node, file);
-            //balance(pos_node, file);
+            
+            
 
         }
+        //balance(pos_node, file); ser feliz
     }
 
     int height(long pos_node, fstream &file){
@@ -215,77 +223,90 @@ private:
 
 }
 
-    void balance(long &pos_node, fstream &file){
+    void balance(long &pos_node,fstream &file){
+        if(pos_node == -1) return;
         file.seekg(pos_node, ios::beg);
         RecordAvl record;
         file.read((char*)&record, sizeof(RecordAvl));
-        int hb = balancingfactor(pos_node, file);
-        if(hb > 1 && balancingfactor(record.left, file) >= 0){
+        int bf = balancingfactor(pos_node, file);
+        if(bf >= 2){
+            if(balancingfactor(record.left, file) <=1){
+                cout<<"ANTIGUO RECORD.LEFT: "<<getRecord(record.left, file).id<<endl;
+                left_rota(record.left, file);
+                cout<<"NUEVO RECORD.LEFT: "<<getRecord(record.left, file).id<<endl;
+            }
+            write_file(pos_node, record);
+            //cout<<"NUEVO RECOD.LEFT DEL POS_NODE: "<<getRecord(getRecord(pos_node, file).left, file).id<<endl;
             right_rota(pos_node, file);
         }
-        else if(hb > 1 && balancingfactor(record.left, file) < 0){
-            left_rota(record.left, file);
-            right_rota(pos_node, file);
-        }
-        else if(hb < -1 && balancingfactor(record.right, file) <= 0){
+        else if(bf <= -2){
+            if(balancingfactor(record.right, file) >= -1){
+                right_rota(record.right, file);
+            }
+            write_file(pos_node, record);
             left_rota(pos_node, file);
         }
-        else if(hb < -1 && balancingfactor(record.right, file) > 0){
-            right_rota(record.right, file);
-            left_rota(pos_node, file);
-        }
-        //actualizamos la altura del nodo y sus hijos
-        updateheight(pos_node, file);
-        updateheight(record.left, file);
-        updateheight(record.right, file);
-
     }
 
     void left_rota(long &pos_node, fstream &file){
+        //cout<<"Rotacion IZQUIERDAA"<<endl;
         file.seekg(pos_node, ios::beg);
-        RecordAvl record;
-        file.read((char*)&record, sizeof(RecordAvl));
+        RecordAvl padre;
+        file.read((char*)&padre, sizeof(RecordAvl));
+        //cout<<"record_padre: "<<"------>"<<padre.id<<" "<<padre.height<<endl;
+        long hijo = padre.right;
+        file.seekg(hijo, ios::beg);
+        RecordAvl hijo_record;
+        file.read((char*)&hijo_record, sizeof(RecordAvl));
+        //cout<<"record_hijo: "<<"------->"<<hijo_record.id<<" "<<hijo_record.height<<endl;
 
-        long new_root = record.right;
-        file.seekg(new_root, ios::beg);
-        RecordAvl new_root_record;
-        file.read((char*)&new_root_record, sizeof(RecordAvl));
+        padre.right = hijo_record.left;
+        //cout<<"nuevo hijo del padre: "<<padre.right<<endl;
+        hijo_record.left = pos_node;
+        //cout<<"nuevo padre del hijo: "<<getRecord(hijo_record.left,file).id<<endl;
 
-        record.right = new_root_record.left;
-        new_root_record.left = pos_node;
+        padre.height = 1 + max(height(padre.left, file), height(padre.right, file));
+        //cout<<"ESTE ES EL POS_NODE: "<<pos_node<<endl;
+        //cout<<"ESTE ES EL HIJO_RECORD.LEFT: "<<hijo_record.left<<endl;
+        hijo_record.height = 1 + max(padre.height, height(hijo_record.right, file));
+        //cout<<"record_padre: "<<padre.id<<" "<<padre.height<<endl;
+        //cout<<"record_hijo: "<<hijo_record.id<<" "<<hijo_record.height<<endl;
 
-        record.height = 1 + max(height(record.left, file), height(record.right, file));
-        new_root_record.height = 1 + max(height(new_root_record.left, file), height(new_root_record.right, file));
+        write_file(pos_node, padre);
 
+        write_file(hijo, hijo_record);
 
-        write_file(pos_node, record);
-
-        write_file(new_root, new_root_record);
-
-        pos_node = new_root;
+        pos_node = hijo;
+        
     }
 
     void right_rota(long &pos_node, fstream &file){
+        cout<<"Rotacion DEREECHAAAAA"<<endl;
         file.seekg(pos_node, ios::beg);
-        RecordAvl record;
-        file.read((char*)&record, sizeof(RecordAvl));
+        RecordAvl padre;
+        file.read((char*)&padre, sizeof(RecordAvl));
+        cout<<"record_padre: "<<"------>"<<padre.id<<" "<<padre.height<<endl;
+        long hijo = padre.left;
+        file.seekg(hijo, ios::beg);
+        RecordAvl hijo_record;
+        file.read((char*)&hijo_record, sizeof(RecordAvl));
+        cout<<"record_hijo: "<<"------->"<<hijo_record.id<<" "<<hijo_record.height<<endl;
 
-        long new_root = record.left;
-        file.seekg(new_root, ios::beg);
-        RecordAvl new_root_record;
-        file.read((char*)&new_root_record, sizeof(RecordAvl));
+        padre.left = hijo_record.right;
+        hijo_record.right = pos_node;
 
-        record.left = new_root_record.right;
-        new_root_record.right = pos_node;
+        padre.height = 1 + max(height(padre.left, file), height(padre.right, file));
+        hijo_record.height = 1 + max(height(hijo_record.left, file), padre.height);
 
-        record.height = 1 + max(height(record.left, file), height(record.right, file));
-        new_root_record.height = 1 + max(height(new_root_record.left, file), height(new_root_record.right, file));
+        cout<<"record_padre: "<<padre.id<<"  "<<padre.height<<endl;
+        cout<<"record_hijo: "<<hijo_record.id<<" "<<hijo_record.height<<endl;
 
-        write_file(pos_node, record);
+        write_file(pos_node, padre);
 
-        write_file(new_root, new_root_record);
-
-        pos_node = new_root;
+        write_file(hijo, hijo_record);
+        //cout<<"RECORD DEL HIJO: "<<getRecord(hijo, file).id<<endl;
+        pos_node = hijo;
+        //cout<<"RECORD DEL POS_NODE: "<<getRecord(pos_node, file).id<<endl;
     }
 
     vector<RecordAvl> inorder(long &pos_node, vector<RecordAvl> &result, fstream &file){
@@ -421,6 +442,7 @@ void busqueda_rango(string filename){
     cout<<endl;
     cout<<"Fin de la busqueda"<<endl;
 }
+
 void ingresar_registro(string filename){
     AVLFile file(filename);
     RecordAvl record;

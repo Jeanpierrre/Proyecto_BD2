@@ -171,6 +171,9 @@ void insert(long &pos_node, RecordAvl record,fstream &file){
         balance(pos_node, file); ser feliz
     }
 ```
+<p align="center">
+  <img src="/img/Imagen de WhatsApp 2023-09-25 a las 15.15.46.jpeg">
+</p>
 
 ### Búsqueda
 

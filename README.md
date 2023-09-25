@@ -150,7 +150,7 @@ void static_hash::insert_record(Record record) {
 ```
 ### Tiempo de insertar los registros
 <p align="center">
-  <img src="/cvst.PNG">
+  <img src="/img/hash_ti.png">
 </p>
 
 ### Búsqueda

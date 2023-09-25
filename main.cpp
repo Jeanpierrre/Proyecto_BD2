@@ -2,6 +2,7 @@
 #include "Record.h"
 #include "Bucket.h"
 #include "extendible_hash.h"
+#include "avlfile.cpp"
 using namespace std;
 #include <chrono>
 #include "llamadas.h"
@@ -143,10 +144,96 @@ void Interactive_Menu_ExtendibleHash()
     } while (repetir);
 }
 
+void interactiveMenu_Avl(){
+    bool archivoCargado = false; // Bandera para controlar si el archivo se ha cargado
+
+    while (true) {
+        cout << "-----------------" << endl;
+        if (!archivoCargado) {
+            cout << "1. Cargar archivo" << endl;
+        }
+        cout << "2. Buscar por VIN" << endl;
+        cout << "3. Buscar por rango de VIN" << endl;
+        cout<<"4. Mostrar todos los datos"<<endl;
+        cout<<"5. Ingresar registro"<<endl;
+        cout << "6. Salir" << endl;
+
+        int opcion;
+        cin >> opcion;
+
+        switch (opcion) {
+            case 1:
+                if (!archivoCargado) {
+                    writeFile("texto.txt");
+                    archivoCargado = true;
+                    cout << "Archivo cargado exitosamente." << endl;
+                } else {
+                    cout << "El archivo ya ha sido cargado." << endl;
+                }
+                break;
+            case 2:
+                if (archivoCargado) {
+                    Buscar_alumno_codigo("filenameavl.bin");
+                } else {
+                    cout << "Primero debe cargar el archivo." << endl;
+                }
+                break;
+            case 3:
+                if (archivoCargado) {
+                    busqueda_rango("filenameavl.bin");
+                } else {
+                    cout << "Primero debe cargar el archivo." << endl;
+                }
+                break;
+            case 4:
+                if(archivoCargado){
+                    readFile("filenameavl.bin");
+                }
+                else{
+                    cout<<"Primero debe cargar el archivo."<<endl;
+                }
+                break;
+            
+            case 5:
+                cout<<"Ingresar registro"<<endl;
+                ingresar_registro("filenameavl.bin");
+            case 6:
+                cout << "Saliendo del programa..." << endl;
+                return; // Terminar el programa
+            default:
+                cout << "Opción no válida. Intente de nuevo." << endl;
+
+                break;
+        }
+        // Pausa para permitir al usuario volver al menú principal
+        cout << "Presione Enter para volver al menú principal..." << endl;
+        cin.ignore(); // Limpiar el búfer de entrada
+        cin.get();    // Esperar a que el usuario presione Enter
+    }
+}
 
 int main() {
+    cout<<"Bienvenido"<<endl;
+    cout<<"Seleccione el tipo de estructura que desea utilizar"<<endl;
+    cout<<"1. Extendible Hash"<<endl;
+    cout<<"2. AVL"<<endl;
+    int opcion;
+    cin>>opcion;
+    while(opcion!=1 and opcion!=2){
+        cerr<<"Ingrese una opcion valida"<<endl;
+        cin>>opcion;
+    }
+    if(opcion==1){
+        cout<<"Ha seleccionado Extendible Hash"<<endl;
+        Interactive_Menu_ExtendibleHash();
+    }
+    else{
+        cout<<"Ha seleccionado AVL"<<endl;
+        interactiveMenu_Avl();
+    }
 
-    Interactive_Menu_ExtendibleHash();
+    
+    
     //read_dataset_count("prueba.csv",4);
 /*
     extendible_hash prueba(3,"index_prue.bin","data_prue.bin");

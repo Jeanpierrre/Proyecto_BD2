@@ -30,6 +30,20 @@ struct RecordAvl
     void showData() {
         cout<<id<<" "<<Price<<" "<<Year<<" "<<" "<<State<<" "<<Vin<<" "<<Make<<" "<<" i: "<<left<<" d: "<<right<<" height: "<<height<<endl;
     }
+    void setData() {
+        cout << "id:";
+        cin >> id;
+        cout << "Price: ";
+        cin >> Price;
+        cout << "Year: ";
+        cin >> Year;
+        cout << "State: ";
+        cin >> State;
+        cout << "Vin: ";
+        cin >> Vin;
+        cout << "Make: ";
+        cin >> Make;
+    }
     
 };
 
@@ -406,4 +420,10 @@ void busqueda_rango(string filename){
     }
     cout<<endl;
     cout<<"Fin de la busqueda"<<endl;
+}
+void ingresar_registro(string filename){
+    AVLFile file(filename);
+    RecordAvl record;
+    record.setData();
+    file.insert(record);
 }

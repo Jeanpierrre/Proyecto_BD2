@@ -18,9 +18,7 @@ class Sequential_Record {
     char VIN[20]; // Primary Key
     char make[10];
 
-    long next = -1;
-    char file = 'd';
-
+    pair<long, char> next_pos = make_pair(-1, 'd');
 public:
     Sequential_Record() {
         this->id = 0;
@@ -41,8 +39,7 @@ public:
         strcpy(this->VIN, _VIN.c_str());
         strcpy(this->make, _make.c_str());
 
-        this->next = -1;
-        char file = 'd';
+        next_pos = make_pair(-1, 'd');
     }
 
     bool operator<(const Sequential_Record &a) { return string(this->VIN) < string(a.VIN); }
@@ -75,8 +72,7 @@ public:
         strcpy(this->VIN, _VIN.c_str());
         strcpy(this->make, _make.c_str());
 
-        this->next = -1;
-        char file = 'd';
+        next_pos = make_pair(-1, 'd');
     }
 
     void showData() {
@@ -90,17 +86,10 @@ public:
     }
 
     void setNext(long n, char f) {
-        next = n;
-        file = f;
+        next_pos = make_pair(n, f);
     }
-    long getNext()
-    {
-        return next;
-    }
-    char getFile()
-    {
-        return file;
-    }
+    long getNext() { return next_pos.first; }
+    char getFile() { return next_pos.second; }
     string getKey() {
         return string(VIN);
     }
@@ -118,7 +107,7 @@ bool comparator(T &a, T &b) { return a < b; }
 
 // ------------------------------------------------------------------------------------
 
-class Sequential {
+class Sequential_File {
 private:
     string data_file_name;
     string aux_file_name;
@@ -268,7 +257,7 @@ private:
     }
 
 public:
-    Sequential(string name) {
+    Sequential_File(string name) {
         this->data_file_name = name;
         this->aux_file_name = "aux_" + name;
 
@@ -387,13 +376,52 @@ public:
         }
     }
 
-    Sequential_Record search(string key) {
+    Sequential_Record search (string key) {
         Sequential_Record empty;
-    
+        Sequential_Record out;
+        long pos = binarySearch(key);
+        fstream data(data_file_name, ios::binary | ios::in | ios::out);
+        if (data.is_open()) {
+            data.seekg(pos, ios::beg);
+            data.read((char *)&out, sizeof(Sequential_Record));
+            if (out.getKey() == key) {
+                data.close();
+                if (out.getNext() == -2) {
+                return empty;
+                } else
+                return out;
+            }
+            if (out.getNext() == -1) {
+                data.close();
+                return empty;
+            }
+
+            fstream aux_data(aux_file_name, ios::binary | ios::in | ios::out);
+            if (aux_data.is_open()) {
+                long a_pos = out.getNext();
+                char a_file = out.getFile();
+                while (a_file == 'a') {
+                    aux_data.seekg(a_pos, ios::beg);
+                    aux_data.read((char *)&out, sizeof(Sequential_Record));
+                    if (out.getKey() == key) {
+                        data.close();
+                        aux_data.close();
+                        if (out.getNext() == -2) {
+                        return empty;
+                        } else
+                        return out;
+                    }
+                    a_pos = out.getNext();
+                    a_file = out.getFile();
+                }
+                aux_data.close();
+            }
+            data.close();
+        }
         return empty;
     }
 
-    vector<Sequential_Record> search(string begin_key, string end_key) {
+    vector<Sequential_Record> search_by_range (string begin_key, string end_key) {
         vector<Sequential_Record> result;
         
         return result;
@@ -445,7 +473,7 @@ public:
 
 // --------------------------------------------------------------------------------------------
 
-void read_dataset_count(string filename, Sequential &ext) {
+void read_dataset_count(string filename, Sequential_File &ext) {
     fstream fio (filename, ios::in | ios::out | ios::binary);
     if (!fio.is_open()) {
         cout << "Error en archivo CSV" << endl;

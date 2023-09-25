@@ -6,7 +6,7 @@
 #include "avlfile.cpp"
 #include "llamadas.h"
 #include "sequential_file.h"
-#include "llamdas.h"
+#include "llamadas.h"
 using namespace std;
 
 
@@ -132,7 +132,7 @@ int main() {
     }
     else {
         cout << "Ha seleccionado Sequential File" << endl << endl;
-        Sequential seq("data.dat");
+        Sequential_File seq("data.dat");
 
         while (true) {
             int op = Menu_SequentialFile();

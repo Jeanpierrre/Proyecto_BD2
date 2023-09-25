@@ -2,12 +2,12 @@
 #include <string>
 #include <sstream>
 #include <vector>
-#include "static_hash.h"
-using namespace std;
 #include "llamadas.h"
+#include "static_hash.h"
+#include "./../sequential_file.h"
+using namespace std;
+
 class Parser {
-
-
 public:
     string tipo;
     string tabla;
@@ -115,8 +115,29 @@ public:
                     cout<<"Key no presente"<<endl;
                 }
             }
-
-
+        }
+        if (tabla == "sequential_file") {
+            string temp = tabla + "parser";
+            Sequential_File file("temp");
+            if (tipo == "create") {
+                cout << "CREATE" << endl;
+                read_dataset_count("prueba.csv", file);
+            }
+            else if (tipo == "select") {
+                cout << "SELECT" << endl;
+                if (file.search(valor).getKey() != "null") {
+                    cout << "IN DATA" << endl;
+                }
+                else {
+                    cout << "NOT FOUND" << endl;
+                }
+            }
+            else if (tipo == "insert") {
+                cout << "INSERT" << endl;
+            }
+            else if (tipo == "delete") {
+                cout << "DELETE" << endl;
+            }
         }
     }
 

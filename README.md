@@ -50,7 +50,31 @@ void extendible_hash::insert_record(Record record) {
 
 ### Búsqueda
 Primero se busca el bucket asociado a través de la clave (key) en el bucket principal. Si no se encuentra en el bucket principal, se itera en los buckets siguientes (bucket.nextbucket) hasta encontrar el registro deseado.
-
+```cpp
+bool extendible_hash::search_record(string vin_key) {
+    Record record;
+    int number_key= Vin_to_number(vin_key);
+    string key=(BinKeyMod(number_key));//funcion hash
+    int pos=search_pos_data(key);
+    Bucket bucket= read_bucket(pos);
+    cout<<"FIN"<<endl;
+    for (int i = 0; i < bucket.count; i++){   
+        record = bucket.records[i];
+        if (record.Vin == vin_key){
+            bucket.records[i].showData();
+            return true;
+            }
+    }
+    while(bucket.nextBucket!=-1){
+        bucket = read_bucket(bucket.nextBucket);
+        for (int i = 0; i < bucket.capacity; i++){
+            record = bucket.records[i];
+            if (record.Vin == vin_key)
+                return true;}
+    }
+    return false;
+}
+```
 ### Eliminación
 
 La eliminación de registros implica ubicar el registro deseado en el bucket correspondiente y reemplazarlo por el último registro del mismo, actualizando el tamaño del bucket.
@@ -91,7 +115,7 @@ bool extendible_hash::delete_Record(string key_record) {
     }
     return false;
 }
-
+```
 ## Static Hashing
 
 Static Hashing es una técnica de organización de datos que utiliza un esquema fijo de división de registros en buckets predefinidos.

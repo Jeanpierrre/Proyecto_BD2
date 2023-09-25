@@ -74,6 +74,9 @@ La eliminación consiste en encontrar el registro deseado en su bucket correspon
 Este enfoque está diseñado para manejar una cantidad fija de datos y no se ajusta de forma dinámica como en otros métodos como Extendible Hashing.
 
 ## Avl File
+<div align="center">
+  <img src="https://students.cs.byu.edu/~cs235ta/labs/images/avl.png" alt="Avl FILE" style="border-radius: 15px;">
+</div>
 El AVL-File es una estructura de datos basada en árboles AVL que se utiliza para almacenar y gestionar registros. Esta estructura combina las propiedades de los árboles AVL (árboles binarios de búsqueda balanceados) con archivos binarios para lograr una organización eficiente de los registros y operaciones de búsqueda, inserción y eliminación.
 
 ### Inserción

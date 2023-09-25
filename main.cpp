@@ -1,11 +1,13 @@
 #include <iostream>
+#include <chrono>
 #include "Record.h"
 #include "Bucket.h"
 #include "extendible_hash.h"
 #include "avlfile.cpp"
-using namespace std;
-#include <chrono>
 #include "llamadas.h"
+#include "sequential_file.h"
+
+using namespace std;
 
 void Interactive_Menu_ExtendibleHash()
 {
@@ -212,6 +214,35 @@ void interactiveMenu_Avl(){
     }
 }
 
+// Sequential 
+
+int Menu_SequentialFile() {
+    int op;
+    while (true) {
+        cout << endl << "///// Menu ///// " << endl;
+        cout << "1. Load .csv" << endl;
+        cout << "2. Add record" << endl;
+        cout << "3. Remove record" << endl;
+        cout << "4. Search record" << endl;
+        cout << "5. Search by range" << endl;
+        cout << "6. Show all records" << endl;
+        cout << "0. Exit" << endl;
+
+        cout << "--> ";
+        cin >> op;
+
+        if (op == 0 || op == 1 || op == 2 || op == 3 || op == 4 || op == 5 ||
+            op == 6) {
+        return op;
+        break;
+        } else {
+        cout << "Not valid option" << endl;
+        Sleep(2000);
+        system("clear");
+        }
+    }
+}
+
 int main() {
     cout<<"Bienvenido"<<endl;
     cout<<"Seleccione el tipo de estructura que desea utilizar"<<endl;
@@ -223,13 +254,49 @@ int main() {
         cerr<<"Ingrese una opcion valida"<<endl;
         cin>>opcion;
     }
+
     if(opcion==1){
         cout<<"Ha seleccionado Extendible Hash"<<endl;
         Interactive_Menu_ExtendibleHash();
     }
-    else{
+    else if (opcion == 2) {
         cout<<"Ha seleccionado AVL"<<endl;
         interactiveMenu_Avl();
+    }
+    else {
+        cout << "Ha seleccionado Sequential File" << endl;
+        Sequential seq("data.dat");
+
+        while (true) {
+            int op = Menu_SequentialFile();
+
+            if (op == 1) {
+                cout << "Cargando data from .cvs ... " << endl << endl;
+                read_dataset_count("prueba.csv", seq);
+                cout << endl;
+
+            } else if (op == 2) {
+                cout << "Add record ... " << endl << endl;
+
+            } else if (op == 3) {
+                cout << "Remove record from data ... " << endl << endl;
+
+            } else if (op == 4) {
+                cout << "Search a record" << endl << endl;
+
+            } else if (op == 5) {
+                cout << "Search by range" << endl << endl;
+
+            } else if (op == 6) {
+                cout << "Show all record in data" << endl << endl;
+                seq.showRecords();
+                cout << endl;
+
+            } else {
+                break;
+            }
+        }
+        cout << "Gracias!" << endl;
     }
 
     

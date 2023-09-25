@@ -34,6 +34,24 @@ Primero se busca el bucket asociado a través de la clave (key) en el bucket pri
 
 La eliminación de registros implica ubicar el registro deseado en el bucket correspondiente y reemplazarlo por el último registro del mismo, actualizando el tamaño del bucket.
 
+## Static Hashing
+
+Static Hashing es una técnica de organización de datos que utiliza un esquema fijo de división de registros en buckets predefinidos.
+
+### Inserción
+
+La inserción implica asignar un registro a un bucket específico según su clave, utilizando una función de hash. Si el bucket está lleno, se pueden tomar medidas como reorganizar la estructura o implementar técnicas de resolución de colisiones.
+
+### Búsqueda
+
+La búsqueda implica localizar el bucket asociado a una clave mediante la función de hash y buscar el registro dentro de ese bucket. En caso no estar ahi validar el anexado a este.
+
+### Eliminación
+
+La eliminación consiste en encontrar el registro deseado en su bucket correspondiente y eliminarlo, actualizando si es necesario la organización del bucket.
+
+Este enfoque está diseñado para manejar una cantidad fija de datos y no se ajusta de forma dinámica como en otros métodos como Extendible Hashing.
+
 ## Avl File
 El AVL-File es una estructura de datos basada en árboles AVL que se utiliza para almacenar y gestionar registros. Esta estructura combina las propiedades de los árboles AVL (árboles binarios de búsqueda balanceados) con archivos binarios para lograr una organización eficiente de los registros y operaciones de búsqueda, inserción y eliminación.
 

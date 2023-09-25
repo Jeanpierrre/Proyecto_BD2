@@ -297,6 +297,18 @@ Se trata de un método simple utilizado para el almacenamiento, organización y 
 ### Inserción
 La inserción para el sequential file y sus dos archivos presenta múltiples casos que deben ser analizados con anterioridad. Se recibe un registro el cual deberá posicionarse donde corresponda según su valor Key. En caso este valor sea menor que los valores ya insertados en el archivo principal, deberá utilizarse un archivo auxiliar con tamaño limitado, esto sin perder el registro anterior y el siguiente al insertado. Cuando el tamaño del archivo auxiliar exceda, se realizará una actualización en el achivo principal con todos los registros ya ordenados secuencialmente.
 
+```cpp
+void add (Sequential_Record record) {
+	// Si el archivo principal esta vacío, se inserta
+	// Caso contrario, hay data existente, se requiere comparar
+		// Es menor que el previo y el siguiente es el último, se inserta
+		// Caso contrario, se manda a Aux
+	
+		// Actualizar valores si es el último
+		// Caso de sobre-escritura en record eliminado
+}
+```
+
 ### Búsqueda
 La función de busqueda nos permite encontrar si es que existe algún registro que coincidan con el valor dado o este no se encuentra en la data actual. 
 
@@ -315,3 +327,9 @@ Sequential_Record search (string key) {
 
 ### Eliminación
 Este método nos permite eliminar un registro de forma representativa ya que realmente se hace un cambio de estado. Esto permite saltar el registro ya que ya no habría ningun registro que apunte al eliminado como siguiente. 
+
+### Tiempo de operaciones por registros
+
+<p align="center">
+  <img src="/img/seq.jpeg">
+</p>

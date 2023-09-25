@@ -143,6 +143,7 @@ El AVL-File es una estructura de datos basada en árboles AVL que se utiliza par
 ### Inserción
 
 La inserción de registros en el AVL-File se realiza de manera similar a la inserción en un árbol AVL convencional. Cada registro se inserta en el árbol según un criterio de orden, que generalmente está basado en una clave única, como un valor hash o un identificador único. Durante la inserción, el árbol se reorganiza automáticamente para mantener su propiedad de equilibrio (balance). Si la inserción desequilibra el árbol, se realizan rotaciones para restaurar el equilibrio.
+
 ```cpp
 void insert(long &pos_node, RecordAvl record,fstream &file){
         if(pos_node==-1){
@@ -172,7 +173,7 @@ void insert(long &pos_node, RecordAvl record,fstream &file){
     }
 ```
 <p align="center">
-  <img src="/img/Imagen de WhatsApp 2023-09-25 a las 15.15.46.jpeg">
+  <img src="/img/time_avl.jpg">
 </p>
 
 ### Búsqueda

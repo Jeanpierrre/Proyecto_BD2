@@ -5,9 +5,9 @@ using namespace std;
 void parser_initial(){
 
     string sqlStatement1 = "create table Customer from file 'data.csv' using index hash(VIN)";
-    string sqlStatement2 = "delete from avi_file where VIN = KL4CJASB1HB027202";
-    string sqlStatement3 = "select * from avi_file where VIN = KL4CJASB1HB027202";
-    string sqlStatement4 = "insert into avi_file values 40";
+    string sqlStatement2 = "delete from avl_file where VIN = KL4CJASB1HB027202";
+    string sqlStatement3 = "select * from avl_file where VIN = KL4CJASB1HB027202";
+    string sqlStatement4 = "insert into avl_file values 40";
     //parser capaz de cargar indices eliminar y buscar
     Parser parser(sqlStatement3);
 

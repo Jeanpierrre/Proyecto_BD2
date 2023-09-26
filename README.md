@@ -290,6 +290,38 @@ RecordAvl find(long pos_node, long long key, fstream &file){
 		}
     }
 ```
+### Búsqueda por rango
+La función "Range_search" se utiliza para buscar registros en un rango específico de claves dentro del árbol AVL y recopilar los registros que satisfacen ese criterio en un vector.
+#### Descripción de las funciones en el contexto de "búsqueda por rango":
+
+1. public vector<RecordAvl> Range_search(long long key_begin, long long key_end): Esta es la función principal que se llama desde fuera de la clase para realizar la búsqueda por rango. Toma dos argumentos de clave (key_begin y key_end) que definen el rango que se desea buscar. Abre el archivo binario, llama a la función privada Range_search y luego cierra el archivo. Devuelve un vector de registros (RecordAvl) que caen dentro del rango especificado.
+
+2. private vector<RecordAvl> Range_search(long pos_node, long long key_begin, long long key_end, vector<RecordAvl> &result, fstream &file): Esta es la función recursiva privada que realiza la búsqueda por rango en el árbol AVL. Toma varios argumentos:
+
+	pos_node: La posición actual en el archivo binario que representa el nodo en el árbol AVL.
+	key_begin y key_end: Los límites del rango de búsqueda.
+
+	result: Un vector donde se almacenan los registros que caen dentro del rango.
+	file: Un objeto de flujo de archivo que se utiliza para leer los registros del archivo binario.
+
+```cpp
+ vector<RecordAvl> Range_search(long pos_node, long long key_begin, long long key_end, vector<RecordAvl> &result,fstream &file){
+        if(pos_node != -1){
+            RecordAvl record;
+            file.seekg(pos_node, ios::beg);
+            file.read(reinterpret_cast<char*>(&record), sizeof(RecordAvl));
+            this->llamadasamemoria=llamadasamemoria+1;
+
+            Range_search(record.left, key_begin, key_end, result, file);
+            if(hash_function(record.Vin) >= key_begin && hash_function(record.Vin) <= key_end){
+                result.push_back(record);
+                cout<<record.Vin<<endl;
+            }
+            Range_search(record.right, key_begin, key_end, result, file);
+        }
+        return result;
+    }
+```
 
 ### Eliminacion
 

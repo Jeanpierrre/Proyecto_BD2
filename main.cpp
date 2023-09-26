@@ -6,7 +6,6 @@
 #include "avlfile.cpp"
 #include "llamadas.h"
 #include "sequential_file.h"
-#include "llamadas.h"
 using namespace std;
 
 
@@ -135,7 +134,7 @@ int main() {
 
     if(opcion==1){
         cout<<"Ha seleccionado Extendible Hash"<<endl;
-        Interactive_Menu_ExtendibleHash();
+        //Interactive_Menu_ExtendibleHash();
     }
     else if (opcion == 2) {
         cout<<"Ha seleccionado AVL"<<endl;

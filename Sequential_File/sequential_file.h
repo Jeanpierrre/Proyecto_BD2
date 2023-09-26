@@ -332,7 +332,7 @@ public:
                     data.seekp(pos);
                     data.write((char *)&tmp, sizeof(Sequential_Record));
 
-                    tmp.showData();
+                    // tmp.showData();
 
                     sizeData++;
                 } else {
